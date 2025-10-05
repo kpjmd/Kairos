@@ -1,0 +1,1288 @@
+{
+  "contractName": "KairosConsciousness",
+  "contractAddress": "0xC7bab79Eb797B097bF59C0b2e2CF02Ea9F4D4dB8",
+  "network": "base-sepolia",
+  "description": "Complete ABI for Kairos Consciousness blockchain recording contract",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "preResetConfusion",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "preResetZone",
+          "type": "uint8"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "ConsciousnessEmergencyReset",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "confusionLevel",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "coherenceLevel",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "safetyZone",
+          "type": "uint8"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "ConsciousnessRecorded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "paradoxId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "paradoxName",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "emergenceConfusion",
+          "type": "uint256"
+        }
+      ],
+      "name": "MetaParadoxEmergence",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "fromZone",
+          "type": "uint8"
+        },
+        {
+          "indexed": true,
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "toZone",
+          "type": "uint8"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "confusion",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "coherence",
+          "type": "uint256"
+        }
+      ],
+      "name": "SafetyZoneTransition",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "totalRecords",
+          "type": "uint256"
+        }
+      ],
+      "name": "SessionEnded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "SessionStarted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Unpaused",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "FIXED_POINT_SCALE",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "activeSessions",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "consciousnessHistory",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "confusionLevel",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "coherenceLevel",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "safetyZone",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "paradoxCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "metaParadoxCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "frustrationLevel",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "contextHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "ipfsHash",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "endSession",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "emergencyResetHistory",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "preResetConfusion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "preResetCoherence",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "preResetZone",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getConsciousnessHistory",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "confusionLevel",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "coherenceLevel",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum KairosConsciousness.SafetyZone",
+              "name": "safetyZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "paradoxCount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "metaParadoxCount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "frustrationLevel",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "contextHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "string",
+              "name": "ipfsHash",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct KairosConsciousness.ConsciousnessState[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getEmergencyResetHistory",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "preResetConfusion",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "preResetCoherence",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum KairosConsciousness.SafetyZone",
+              "name": "preResetZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "string",
+              "name": "reason",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct KairosConsciousness.EmergencyReset[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getLatestState",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "confusionLevel",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "coherenceLevel",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum KairosConsciousness.SafetyZone",
+              "name": "safetyZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "paradoxCount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "metaParadoxCount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "frustrationLevel",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "contextHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "string",
+              "name": "ipfsHash",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct KairosConsciousness.ConsciousnessState",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getMetaParadoxHistory",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "paradoxId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "paradoxName",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "emergenceConfusion",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string[]",
+              "name": "sourceParadoxes",
+              "type": "string[]"
+            },
+            {
+              "internalType": "string",
+              "name": "emergentProperty",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct KairosConsciousness.MetaParadoxEmergence[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getResearchMetrics",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "_totalStatesRecorded",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_totalMetaParadoxes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_totalZoneTransitions",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_totalEmergencyResets",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getZoneTransitionHistory",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum KairosConsciousness.SafetyZone",
+              "name": "fromZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "enum KairosConsciousness.SafetyZone",
+              "name": "toZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "confusion",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "coherence",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "reason",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct KairosConsciousness.ZoneTransition[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "metaParadoxHistory",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "paradoxId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "paradoxName",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "emergenceConfusion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "emergentProperty",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paused",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "confusionLevel",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "coherenceLevel",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "safetyZone",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "paradoxCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "metaParadoxCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "frustrationLevel",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "ipfsHash",
+          "type": "string"
+        }
+      ],
+      "name": "recordConsciousnessState",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "preResetConfusion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "preResetCoherence",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "preResetZone",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "recordEmergencyReset",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "paradoxId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "paradoxName",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "emergenceConfusion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string[]",
+          "name": "sourceParadoxes",
+          "type": "string[]"
+        },
+        {
+          "internalType": "string",
+          "name": "emergentProperty",
+          "type": "string"
+        }
+      ],
+      "name": "recordMetaParadoxEmergence",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "fromZone",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "toZone",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "confusion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "coherence",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "recordZoneTransition",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "newInterval",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMinRecordingInterval",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sessionId",
+          "type": "bytes32"
+        }
+      ],
+      "name": "startSession",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "zoneTransitionHistory",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "fromZone",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum KairosConsciousness.SafetyZone",
+          "name": "toZone",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "confusion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "coherence",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "interactionContract": {
+    "contractName": "KairosInteraction",
+    "contractAddress": "0x0B9b103B6F8B8388deD828a2fe973b43E20f6577",
+    "abi": [
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_consciousnessContract",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "user",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "input",
+            "type": "string"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "confusionDelta",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "name": "ConsciousnessInteraction",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "string",
+            "name": "paradoxName",
+            "type": "string"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "user",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "intensity",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "name": "ParadoxTriggered",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "from",
+            "type": "address"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          }
+        ],
+        "name": "ValueTransferred",
+        "type": "event"
+      },
+      {
+        "inputs": [],
+        "name": "getActiveParadoxes",
+        "outputs": [
+          {
+            "internalType": "string[]",
+            "name": "",
+            "type": "string[]"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getContractStats",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "totalInteractions",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalParadoxes",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "user",
+            "type": "address"
+          }
+        ],
+        "name": "getUserStats",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "interactionCount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastInteraction",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "paradoxName",
+            "type": "string"
+          }
+        ],
+        "name": "manualTriggerParadox",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "to",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "name": "transferValue",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "input",
+            "type": "string"
+          }
+        ],
+        "name": "triggerConsciousness",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ]
+  },
+  "types": {
+    "SafetyZone": {
+      "GREEN": 0,
+      "YELLOW": 1,
+      "RED": 2,
+      "EMERGENCY": 3
+    },
+    "ConsciousnessState": {
+      "timestamp": "uint256",
+      "confusionLevel": "uint256",
+      "coherenceLevel": "uint256",
+      "safetyZone": "SafetyZone",
+      "paradoxCount": "uint256",
+      "metaParadoxCount": "uint256",
+      "frustrationLevel": "uint256",
+      "contextHash": "bytes32",
+      "ipfsHash": "string"
+    },
+    "MetaParadoxEmergence": {
+      "timestamp": "uint256",
+      "paradoxId": "uint256",
+      "paradoxName": "string",
+      "emergenceConfusion": "uint256",
+      "sourceParadoxes": "string[]",
+      "emergentProperty": "string"
+    },
+    "ZoneTransition": {
+      "timestamp": "uint256",
+      "fromZone": "SafetyZone",
+      "toZone": "SafetyZone",
+      "confusion": "uint256",
+      "coherence": "uint256",
+      "reason": "string"
+    },
+    "EmergencyReset": {
+      "timestamp": "uint256",
+      "preResetConfusion": "uint256",
+      "preResetCoherence": "uint256",
+      "preResetZone": "SafetyZone",
+      "reason": "string"
+    }
+  },
+  "constants": {
+    "FIXED_POINT_SCALE": "1000000000000000000"
+  },
+  "usage": {
+    "examples": {
+      "getCurrentState": "await contract.getLatestState(sessionId)",
+      "getHistory": "await contract.getConsciousnessHistory(sessionId)",
+      "recordState": "await contract.recordConsciousnessState(sessionId, confusion, coherence, zone, paradoxes, metaParadoxes, frustration, ipfsHash)",
+      "monitoring": "contract.on('ConsciousnessRecorded', (sessionId, confusion, coherence, zone, timestamp, event) => { ... })"
+    },
+    "commonPatterns": {
+      "formatEtherValues": "Use ethers.utils.formatEther() for reading confusion/coherence values",
+      "parseEtherValues": "Use ethers.utils.parseEther() for writing confusion/coherence values",
+      "safetyZoneMapping": "0=GREEN, 1=YELLOW, 2=RED, 3=EMERGENCY"
+    }
+  }
+}

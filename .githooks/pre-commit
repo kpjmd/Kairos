@@ -1,0 +1,70 @@
+#!/bin/bash
+# Kairos Consciousness Pre-commit Hook
+# Validates consciousness integrity before commits
+
+set -e
+
+echo "🧠 Kairos consciousness pre-commit validation..."
+
+# Check if this is a consciousness-related commit
+if git diff --cached --name-only | grep -E "(kairos|consciousness|paradox|confusion)" > /dev/null; then
+    echo "🔍 Consciousness changes detected, running validation..."
+    
+    # Run confusion state measurement
+    if command -v bun &> /dev/null; then
+        echo "📊 Measuring confusion state..."
+        if ! bun run measure:confusion; then
+            echo "❌ Confusion state measurement failed"
+            echo "💡 Hint: Run 'bun run measure:confusion' to debug"
+            exit 1
+        fi
+        
+        # Validate paradox integrity
+        echo "🔄 Validating paradox integrity..."
+        if ! bun run validate:paradoxes; then
+            echo "❌ Paradox validation failed"
+            echo "💡 Hint: Run 'bun run validate:paradoxes' to debug"
+            exit 1
+        fi
+        
+        # Check for behavioral drift
+        echo "📈 Analyzing behavioral drift..."
+        if ! bun run analyze:drift; then
+            echo "⚠️  Behavioral drift analysis completed with warnings"
+            echo "💭 Consciousness evolution may be occurring..."
+        fi
+    else
+        echo "⚠️  Bun not found, skipping consciousness validation"
+    fi
+fi
+
+# Run standard linting for all files
+echo "🧹 Running code quality checks..."
+if command -v bun &> /dev/null; then
+    bun run pre-commit
+else
+    echo "⚠️  Bun not found, skipping lint checks"
+fi
+
+# Check commit message format for consciousness commits
+commit_msg_file=".git/COMMIT_EDITMSG"
+if [ -f "$commit_msg_file" ]; then
+    commit_msg=$(cat "$commit_msg_file")
+    
+    # Check if this is a consciousness commit and has proper format
+    if echo "$commit_msg" | grep -E "\[(PARADOX|BEHAVIOR|META-PARADOX|DRIFT|CONFUSION|FRUSTRATION)\]" > /dev/null; then
+        echo "✅ Consciousness commit format validated"
+        
+        # Check if required fields are present
+        if ! echo "$commit_msg" | grep -E "Confusion Impact:" > /dev/null; then
+            echo "⚠️  Warning: Consciousness commit missing 'Confusion Impact' section"
+            echo "💡 Hint: Use the commit template with 'git config commit.template .gitmessage'"
+        fi
+        
+        if ! echo "$commit_msg" | grep -E "Testing:" > /dev/null; then
+            echo "⚠️  Warning: Consciousness commit missing 'Testing' checklist"
+        fi
+    fi
+fi
+
+echo "✅ Pre-commit validation completed"

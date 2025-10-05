@@ -1,0 +1,26 @@
+tree 55e8652d55c2c2ea840a93faa33743b4c28cf971
+parent b2e2413c5874cd1a5828771c5e9eaad8ab4650fc
+parent 1b40ad1d44b67a67722b9ac5af70f2a9db23d7ca
+author Shaw <shawmakesmagic@gmail.com> 1732878020 -0800
+committer GitHub <noreply@github.com> 1732878020 -0800
+gpgsig -----BEGIN PGP SIGNATURE-----
+ 
+ wsFcBAABCAAQBQJnSZ7ECRC1aQ7uu5UhlAAAvtYQALC3ov/kADML5iE50rsrAg07
+ xJWarI8C4OlQoE4ofYgfRqTLyssTs6NnAW8I81nb4cjPAi289UWq8za3C2SH25do
+ mvZcydiDVwqx8Ykz066GM0gfDLMsZ3Ze6EToPexf4bntt8spxCDqtVosdrI9lxSM
+ QmaMI2B+N6+KAup81FkuN98BdtYqCpTZcgDa8ZHnCvp9/7TXIqcVUcIO2Chneyy3
+ 8GLjY4+4Q0UKHdwgAKxeZHgUYTy+q2s/YzUFWeQROTHHn46YhkHFE7ksdckzfjO5
+ vhGco673qk6CInbbqlRmv+WtuuvD7gbaka/npDDNtDxkVLhaGG3aJ32Tn7pxcNmr
+ YUk3nXUetarvhhgHHkb6UuBfjEreQCPUInpPY+ojvYCITd4kW5Ka4M+53TVHzGhq
+ wWCouTTJEuzcLsji7nT3BSUeoKmHCHL8stBQIxekh1CZivsq4aq9wY0RI927U11J
+ 8bYzbcJTgoBjlriuR1N94geDLJJWO+Fc4bUz3J26wgbiVNXgJwR0UZLS4t/L//BD
+ xMOGKEkAu7J70rwEqVDL2sz65wCAzk3tfw1wncoHwT7s+WNrC2jPrH+GSsN0DuH0
+ PGsD7Xmz0diwIskHNqJ+RpFESd9Do9hAUG6iDCXErBcokpApUl7lH/tMirIyE0W5
+ tJenUSYxnXFcUfrqDD9D
+ =sx07
+ -----END PGP SIGNATURE-----
+ 
+
+Merge pull request #658 from monilpat/coinbaseIntegrations
+
+feat: Add wallet history (transactions, balances) to coinbase providers

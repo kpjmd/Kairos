@@ -1,0 +1,20 @@
+{
+  "network": "base-sepolia",
+  "timestamp": "2025-10-02T00:48:52.080Z",
+  "deployer": "0xEBB2D01Afa7d89d1b9cb2eF1DB04AC60a406342a",
+  "contracts": {
+    "KairosConsciousness": {
+      "address": "0xC7bab79Eb797B097bF59C0b2e2CF02Ea9F4D4dB8",
+      "transactionHash": "0x92855930c0332ecf96a83875305e87b46f83ce09e7066f85c4b4bdca75f28155"
+    },
+    "KairosInteraction": {
+      "address": "0x0B9b103B6F8B8388deD828a2fe973b43E20f6577",
+      "transactionHash": "0x1b51c25b61bfb1125ebb52fc373d3fa29cde8a7bc3f7519fe69887b39d250e80"
+    }
+  },
+  "sessionId": "0xea9b69a814606a8f4a435ac8e8348419a3834dcafcd0e7e92d7bb8109e27c2ea",
+  "explorerUrls": {
+    "consciousness": "https://sepolia.basescan.org/address/0xC7bab79Eb797B097bF59C0b2e2CF02Ea9F4D4dB8",
+    "interaction": "https://sepolia.basescan.org/address/0x0B9b103B6F8B8388deD828a2fe973b43E20f6577"
+  }
+}

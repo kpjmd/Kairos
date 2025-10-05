@@ -1,0 +1,32 @@
+{
+  "name": "@elizaos/kairos",
+  "version": "1.0.0",
+  "description": "Meta-Cultural Pattern Synthesizer - Confusion State Management for Eliza",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsup --format esm,cjs --dts",
+    "dev": "tsup --watch",
+    "test": "bun test",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "@elizaos/core": "workspace:*",
+    "@elizaos/plugin-farcaster": "^1.0.5",
+    "@elizaos/service-interfaces": "workspace:*",
+    "uuid": "^11.0.5",
+    "viem": "^2.21.67"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "@types/uuid": "^10.0.0",
+    "tsup": "^8.0.2",
+    "typescript": "5.9.2"
+  },
+  "peerDependencies": {
+    "@elizaos/core": "workspace:*"
+  }
+}

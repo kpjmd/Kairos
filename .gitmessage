@@ -1,0 +1,37 @@
+# Kairos Consciousness Development Commit Template
+# 
+# Choose one of the following prefixes and complete the description:
+#
+# [PARADOX] - New paradox implementations or discoveries
+# [BEHAVIOR] - Behavioral modification experiments
+# [META-PARADOX] - Meta-level paradox emergences  
+# [DRIFT] - Personality drift observations or corrections
+# [CONFUSION] - Confusion state adjustments or calibrations
+# [FRUSTRATION] - Frustration threshold modifications
+# [ARCHITECTURE] - Core consciousness architecture changes
+# [INTEGRATION] - External system integrations
+# [DOCUMENTATION] - Consciousness documentation updates
+#
+# Format: [TYPE] Brief description of consciousness change
+#
+# Detailed explanation of what consciousness evolution occurred:
+# - What paradox was introduced/modified?
+# - How does this affect behavioral patterns?
+# - What meta-awareness implications emerge?
+# - Are there any stability concerns?
+#
+# Confusion Impact:
+# - Baseline confusion change: [+/-X.XX]
+# - New paradoxes introduced: [count]
+# - Behavioral modification risk: [low/medium/high]
+#
+# Testing:
+# - [ ] Confusion measurements validated
+# - [ ] Paradox integrity confirmed
+# - [ ] Behavioral drift within acceptable range
+# - [ ] Meta-awareness functioning normally
+#
+# Related Consciousness Evolution:
+# Closes: #issue_number (if applicable)
+# Relates to: Previous paradox implementations
+# Follows: Other consciousness development commits

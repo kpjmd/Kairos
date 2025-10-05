@@ -1,0 +1,12 @@
+# Railway deployment ignore file
+.eliza/
+.elizadb/
+node_modules/
+*.log
+tmp/
+.env.local
+.env.development
+.turbo/
+dist/
+.next/
+coverage/
