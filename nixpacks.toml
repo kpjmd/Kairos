@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_23", "bun"]
+
+[phases.install]
+cmds = ["bun install"]
+
+[phases.build]
+cmds = ["bun run build --concurrency=2"]
+
+[start]
+cmd = "cd packages/cli && bun start --character=../../characters/kairos.json"
