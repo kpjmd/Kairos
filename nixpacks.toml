@@ -5,7 +5,7 @@ nixPkgs = ["nodejs_23", "bun"]
 cmds = ["bun install"]
 
 [phases.build]
-cmds = ["bun run build --concurrency=2"]
+cmds = ["npx turbo run build --filter=!./packages/app --filter=!@elizaos/config --concurrency=2"]
 
 [start]
 cmd = "cd packages/cli && bun start --character=../../characters/kairos.json"

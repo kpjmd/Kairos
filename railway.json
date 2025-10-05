@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "bun run build && cd packages/cli && bun start --character=../../characters/kairos.json",
+    "startCommand": "cd packages/cli && bun start --character=../../characters/kairos.json",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
