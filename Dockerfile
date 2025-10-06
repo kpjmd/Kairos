@@ -65,4 +65,5 @@ ENV NODE_ENV=production
 EXPOSE 3000
 EXPOSE 50000-50100/udp
 
-CMD ["bun", "run", "start"]
+WORKDIR /app/packages/cli
+CMD ["bun", "start", "--character=../../characters/kairos.json"]
