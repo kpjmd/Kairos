@@ -1,0 +1,29 @@
+# Railway Configuration for Kairos Monorepo
+# This configuration prevents Railway from detecting individual packages as separate services
+# and ensures the entire monorepo is deployed as a single unified application.
+
+[build]
+# Use Dockerfile for build (prevents auto-detection of packages)
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Restart policy configuration
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+# Health check configuration
+healthcheckPath = "/"
+healthcheckTimeout = 100
+
+# Watch paths - only rebuild when these paths change
+# This prevents rebuilds on changes to docs, tests, or non-essential files
+watchPaths = [
+  "packages/*/src/**",
+  "packages/*/package.json",
+  "characters/kairos.json",
+  "package.json",
+  "Dockerfile",
+  "railway.json",
+  "railway.toml"
+]
