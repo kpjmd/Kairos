@@ -1,11 +1,14 @@
 # Railway Configuration for Kairos Monorepo
 # This configuration prevents Railway from detecting individual packages as separate services
-# and ensures the entire monorepo is deployed as a single unified application.
+# and ensures the entire monorepo is deployed as a single unified application using Dockerfile ONLY.
 
 [build]
-# Use Dockerfile for build (prevents auto-detection of packages)
-builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
+# FORCE Dockerfile build - disable all auto-detection
+builder = "dockerfile"
+dockerfilePath = "./Dockerfile"
+
+# Disable Nixpacks completely (Railway is deprecating Nixpacks in favor of Railpack)
+nixpacksConfigPath = ""
 
 [deploy]
 # Restart policy configuration
@@ -15,6 +18,10 @@ restartPolicyMaxRetries = 10
 # Health check configuration
 healthcheckPath = "/"
 healthcheckTimeout = 100
+
+# Start command is defined in Dockerfile - do NOT override
+# This ensures Railway uses Dockerfile CMD instead of package.json scripts
+startCommand = ""
 
 # Watch paths - only rebuild when these paths change
 # This prevents rebuilds on changes to docs, tests, or non-essential files
