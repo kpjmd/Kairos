@@ -59,6 +59,8 @@ COPY --from=builder /app/renovate.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/build-utils.ts ./build-utils.ts
+COPY characters ./characters
 
 ENV NODE_ENV=production
 
@@ -66,4 +68,4 @@ EXPOSE 3000
 EXPOSE 50000-50100/udp
 
 WORKDIR /app/packages/cli
-CMD ["bun", "start", "--character=../../characters/kairos.json"]
+CMD ["bun", "dist/index.js", "start", "--character=../../characters/kairos.json"]
