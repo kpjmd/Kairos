@@ -17,7 +17,7 @@ restartPolicyMaxRetries = 10
 
 # Health check configuration
 healthcheckPath = "/ping"
-healthcheckTimeout = 100
+healthcheckTimeout = 300
 
 # Start command is defined in Dockerfile - do NOT override
 # This ensures Railway uses Dockerfile CMD instead of package.json scripts
