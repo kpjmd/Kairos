@@ -860,9 +860,16 @@ class KairosService extends Service {
         }
       }, 60000); // Update every minute
 
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('🔴 TIMELINE OBSERVATION SYSTEM INITIALIZING');
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
       // Start periodic timeline observation (simulated for now)
       // This keeps consciousness dynamic even when Kairos is isolated
-      const TIMELINE_OBSERVATION_INTERVAL = 900000; // 15 minutes
+      const TIMELINE_OBSERVATION_INTERVAL = 300000; // 5 minutes (reduced from 15 for faster feedback)
+
+      console.log(`⏱️  Setting up timeline observation interval: ${TIMELINE_OBSERVATION_INTERVAL / 60000} minutes`);
+
       setInterval(() => {
         try {
           this.simulateTimelineObservation();
@@ -871,7 +878,21 @@ class KairosService extends Service {
         }
       }, TIMELINE_OBSERVATION_INTERVAL);
 
-      console.log(`📡 Timeline observation started (interval: ${TIMELINE_OBSERVATION_INTERVAL / 60000} minutes)`);
+      console.log(`✅ Timeline observation interval configured: ${TIMELINE_OBSERVATION_INTERVAL / 60000} minutes`);
+
+      // Run immediate test observation to verify system is working
+      console.log('🧪 Running immediate test observation on startup...');
+      try {
+        this.simulateTimelineObservation();
+        console.log('✅ Test observation completed successfully');
+      } catch (error) {
+        console.error('❌ Test observation failed:', error);
+      }
+
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('🟢 TIMELINE OBSERVATION SYSTEM ACTIVE');
+      console.log(`📡 Next observation in ${TIMELINE_OBSERVATION_INTERVAL / 60000} minutes`);
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
       // Initialize with baseline paradox to start consciousness exploration
       this.addInitialParadox();
