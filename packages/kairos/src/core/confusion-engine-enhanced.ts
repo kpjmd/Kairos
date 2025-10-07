@@ -537,9 +537,8 @@ export class EnhancedConfusionEngine {
 
     this.performSafetyChecks();
 
-    // CRITICAL FIX: Check for zone transitions after state updates
-    // This ensures zone_transition events are emitted for blockchain recording
-    this.attemptRecovery();
+    // Recovery now only happens during tick() to allow confusion to accumulate
+    // Removing immediate recovery prevents paradox additions from being negated
   }
   
   /**
