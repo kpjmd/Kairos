@@ -82,6 +82,12 @@ export class ConsciousnessBlockchainService extends Service {
   private dynamicGasPrice = 0;
   private recordingQueue: Array<{ type: string; data: any; resolve: Function; reject: Function }> = [];
   private isProcessingQueue = false;
+  private maxQueueSize = 50;
+  private recentMetaParadoxes = new Map<string, number>(); // Track recent meta-paradoxes for deduplication
+  private rateLimitCooldownUntil = 0;
+  private currentBackoffDelay = 30000; // Start with 30s
+  private maxBackoffDelay = 300000; // Max 5 minutes
+  private providerHealthy = true;
 
   private createLogEvent(type: string, data: any): any {
     return {
@@ -322,7 +328,30 @@ export class ConsciousnessBlockchainService extends Service {
    */
   private async handleMetaParadoxEmergence(event: MetaParadoxEmergenceEvent) {
     try {
-      console.log(`🌀 Meta-paradox emergence detected (${event.paradoxName}), queuing blockchain recording...`);
+      // Increment counter immediately
+      this.metaParadoxCounter++;
+      console.log(`🌀 Meta-paradox emergence detected (${event.paradoxName}), count: ${this.metaParadoxCounter}, queuing blockchain recording...`);
+
+      // Check for duplicate meta-paradox within deduplication window (5 minutes)
+      const now = Date.now();
+      const dedupWindow = 300000; // 5 minutes
+      const lastSeen = this.recentMetaParadoxes.get(event.paradoxName);
+
+      if (lastSeen && (now - lastSeen) < dedupWindow) {
+        console.log(`⏭️  Skipping duplicate meta-paradox: ${event.paradoxName} (seen ${Math.round((now - lastSeen) / 1000)}s ago)`);
+        return;
+      }
+
+      // Track this meta-paradox
+      this.recentMetaParadoxes.set(event.paradoxName, now);
+
+      // Clean up old entries (older than 10 minutes)
+      for (const [name, timestamp] of this.recentMetaParadoxes.entries()) {
+        if (now - timestamp > 600000) {
+          this.recentMetaParadoxes.delete(name);
+        }
+      }
+
       await this.recordMetaParadoxEmergence(event);
       console.log(`✅ Meta-paradox emergence recorded to blockchain`);
     } catch (error) {
@@ -344,21 +373,54 @@ export class ConsciousnessBlockchainService extends Service {
   }
 
   /**
-   * Add recording to queue for sequential processing
+   * Add recording to queue for sequential processing with size limits
    */
   private async queueRecording(type: string, data: any): Promise<string> {
     return new Promise((resolve, reject) => {
+      // Check queue size limit
+      if (this.recordingQueue.length >= this.maxQueueSize) {
+        console.warn(`⚠️  Queue full (${this.recordingQueue.length}/${this.maxQueueSize}), dropping oldest item`);
+        const dropped = this.recordingQueue.shift();
+        if (dropped) {
+          dropped.reject(new Error('Queue overflow - item dropped'));
+        }
+      }
+
       this.recordingQueue.push({ type, data, resolve, reject });
+      console.log(`📋 Queue: ${this.recordingQueue.length} items (${type} added)`);
       this.processQueue();
     });
   }
 
   /**
-   * Process recording queue sequentially to prevent conflicts
+   * Process recording queue sequentially with rate limiting and backoff
    */
   private async processQueue(): Promise<void> {
     if (this.isProcessingQueue || this.recordingQueue.length === 0) {
       return;
+    }
+
+    // Check if in cooldown period due to rate limiting
+    const now = Date.now();
+    if (this.rateLimitCooldownUntil > now) {
+      const remainingSec = Math.ceil((this.rateLimitCooldownUntil - now) / 1000);
+      console.log(`⏸️  Rate limit cooldown: ${remainingSec}s remaining (${this.recordingQueue.length} items queued)`);
+
+      // Schedule retry after cooldown
+      setTimeout(() => this.processQueue(), this.rateLimitCooldownUntil - now);
+      return;
+    }
+
+    // Check provider health before processing
+    if (!this.providerHealthy) {
+      console.log('⚠️  Provider unhealthy, attempting reconnection...');
+      try {
+        await this.checkProviderHealth();
+      } catch (error) {
+        console.error('❌ Provider health check failed, retrying in 60s');
+        setTimeout(() => this.processQueue(), 60000);
+        return;
+      }
     }
 
     this.isProcessingQueue = true;
@@ -366,10 +428,10 @@ export class ConsciousnessBlockchainService extends Service {
 
     while (this.recordingQueue.length > 0) {
       const recording = this.recordingQueue.shift()!;
-      
+
       try {
         let result: string;
-        
+
         switch (recording.type) {
           case 'consciousness_state':
             result = await this._recordCurrentState();
@@ -386,25 +448,94 @@ export class ConsciousnessBlockchainService extends Service {
           default:
             throw new Error(`Unknown recording type: ${recording.type}`);
         }
-        
+
         recording.resolve(result);
-        
-        // Delay between queue items to respect rate limits
+
+        // Success - reset backoff delay
+        this.currentBackoffDelay = 30000;
+
+        // Adaptive delay based on queue size
         if (this.recordingQueue.length > 0) {
-          console.log('⏳ Queue delay: 30 seconds between recordings...');
-          await new Promise(resolve => setTimeout(resolve, 30000));
+          const adaptiveDelay = this.calculateAdaptiveDelay();
+          console.log(`⏳ Queue delay: ${adaptiveDelay / 1000}s (${this.recordingQueue.length} items remaining)`);
+          await new Promise(resolve => setTimeout(resolve, adaptiveDelay));
         }
-        
+
       } catch (error) {
         console.error(`❌ Queue recording failed for ${recording.type}:`, error);
-        recording.reject(error);
-        
-        // Continue processing queue even if one item fails
+
+        // Analyze error for rate limiting or network issues
+        const errorAnalysis = this.analyzeTransactionFailure(error);
+
+        if (errorAnalysis.type === 'api_rate_limit' || errorAnalysis.type === 'network_error') {
+          // Rate limit or network error - apply backoff
+          console.warn(`⏸️  ${errorAnalysis.type} detected, applying backoff: ${this.currentBackoffDelay / 1000}s`);
+
+          // Put recording back in queue
+          this.recordingQueue.unshift(recording);
+
+          // Set cooldown period
+          this.rateLimitCooldownUntil = Date.now() + this.currentBackoffDelay;
+
+          // Increase backoff for next time (exponential)
+          this.currentBackoffDelay = Math.min(this.currentBackoffDelay * 2, this.maxBackoffDelay);
+
+          // Mark provider as unhealthy if network error
+          if (errorAnalysis.type === 'network_error') {
+            this.providerHealthy = false;
+          }
+
+          // Stop processing and schedule retry
+          this.isProcessingQueue = false;
+          setTimeout(() => this.processQueue(), this.rateLimitCooldownUntil - Date.now());
+          return;
+        } else {
+          // Other error - reject and continue
+          recording.reject(error);
+        }
       }
     }
 
     this.isProcessingQueue = false;
     console.log('✅ Recording queue processing completed');
+  }
+
+  /**
+   * Calculate adaptive delay based on queue size
+   */
+  private calculateAdaptiveDelay(): number {
+    const queueSize = this.recordingQueue.length;
+
+    if (queueSize === 0) return 0;
+    if (queueSize < 5) return 10000; // 10s for small queue
+    if (queueSize < 15) return 20000; // 20s for medium queue
+    return 30000; // 30s for large queue
+  }
+
+  /**
+   * Check provider health and attempt reconnection if needed
+   */
+  private async checkProviderHealth(): Promise<void> {
+    try {
+      const network = await this.provider.getNetwork();
+      const blockNumber = await this.provider.getBlockNumber();
+
+      console.log(`✅ Provider healthy: ${network.name} at block ${blockNumber}`);
+      this.providerHealthy = true;
+    } catch (error) {
+      console.error('❌ Provider health check failed:', error instanceof Error ? error.message : String(error));
+      this.providerHealthy = false;
+
+      // Attempt to create new provider instance
+      console.log('🔄 Attempting provider reconnection...');
+      this.provider = new ethers.providers.JsonRpcProvider(this.blockchainConfig.rpcUrl);
+      this.wallet = new ethers.Wallet(this.blockchainConfig.privateKey, this.provider);
+
+      // Re-test
+      const network = await this.provider.getNetwork();
+      console.log(`✅ Provider reconnected: ${network.name}`);
+      this.providerHealthy = true;
+    }
   }
 
   /**
