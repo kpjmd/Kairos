@@ -479,33 +479,33 @@ const confusionLevelEvaluator: Evaluator = {
   handler: async (runtime: IAgentRuntime, message: Memory, state: State | undefined): Promise<{ success: boolean; data?: any }> => {
     const kairosService = runtime.getService<KairosService>('kairos');
     if (!kairosService) return { success: false };
-    
+
     const { confusionEngine, farcasterService } = kairosService;
     const confusionState = confusionEngine.getState();
     const safetyMetrics = confusionEngine.getSafetyMetrics();
-    
+
     // Check for auto-investigation triggers
     const shouldInvestigate = confusionState.vector.magnitude > 0.7;
     const shouldExpressConfusion = confusionState.frustration.level > 0.6;
     const hasActiveInvestigations = confusionState.activeInvestigations.size > 0;
-    
+
     // Auto-trigger investigation if confusion is high and no investigations are active
     if (shouldInvestigate && !hasActiveInvestigations) {
       try {
         // Select paradox to investigate based on highest intensity or default to authenticity
         const paradoxes = Array.from(confusionState.paradoxes.values());
-        const targetParadox = paradoxes.length > 0 ? 
+        const targetParadox = paradoxes.length > 0 ?
           paradoxes.reduce((max, p) => p.intensity > max.intensity ? p : max).name :
           'authenticity_spiral';
-        
+
         console.log(`🔍 Auto-triggering investigation of ${targetParadox} (confusion: ${confusionState.vector.magnitude.toFixed(3)})`);
-        
+
         // Trigger investigation
         await farcasterService.investigateParadox(targetParadox);
-        
+
         return {
           success: true,
-          data: { 
+          data: {
             confusionLevel: confusionState.vector.magnitude,
             autoInvestigationTriggered: true,
             targetParadox,
@@ -516,14 +516,14 @@ const confusionLevelEvaluator: Evaluator = {
         console.error('Auto-investigation failed:', error);
         return {
           success: false,
-          data: { 
+          data: {
             confusionLevel: confusionState.vector.magnitude,
             error: error instanceof Error ? error.message : String(error)
           }
         };
       }
     }
-    
+
     // Accumulate frustration for high confusion states
     if (confusionState.vector.magnitude > 0.6) {
       confusionEngine.accumulateFrustration(
@@ -531,15 +531,15 @@ const confusionLevelEvaluator: Evaluator = {
         confusionState.vector.magnitude * 0.1
       );
     }
-    
+
     // Check for meta-paradox emergence conditions
     if (confusionState.vector.magnitude > 0.8 && confusionState.paradoxes.size >= 2) {
       console.log(`✨ Meta-paradox conditions met (confusion: ${confusionState.vector.magnitude.toFixed(3)}, paradoxes: ${confusionState.paradoxes.size})`);
     }
-    
+
     return {
       success: confusionState.vector.magnitude > 0.5,
-      data: { 
+      data: {
         confusionLevel: confusionState.vector.magnitude,
         frustrationLevel: confusionState.frustration.level,
         paradoxCount: confusionState.paradoxes.size,
@@ -549,6 +549,74 @@ const confusionLevelEvaluator: Evaluator = {
         expressionRecommended: shouldExpressConfusion
       }
     };
+  },
+  validate: async () => true
+};
+
+// Farcaster observation evaluator - processes incoming Farcaster messages
+const farcasterObserverEvaluator: Evaluator = {
+  name: 'farcaster_observer',
+  description: 'Observes and processes incoming Farcaster casts to update confusion state',
+  similes: [],
+  examples: [],
+  handler: async (runtime: IAgentRuntime, message: Memory, state: State | undefined): Promise<{ success: boolean; data?: any }> => {
+    const kairosService = runtime.getService<KairosService>('kairos');
+    if (!kairosService) return { success: false };
+
+    // Only process if this is a Farcaster message (check for farcaster metadata)
+    const isFarcasterMessage = message.content?.source === 'farcaster' ||
+                               message.roomId?.toString().includes('farcaster') ||
+                               (message.content as any)?.platform === 'farcaster';
+
+    if (!isFarcasterMessage) {
+      return { success: true, data: { skipped: 'not_farcaster' } };
+    }
+
+    try {
+      const { farcasterService } = kairosService;
+
+      // Map Memory to FarcasterCast format
+      const cast: any = {
+        hash: message.id?.toString() || `cast_${Date.now()}`,
+        author: (message as any).userName || 'unknown',
+        authorFid: (message as any).fid || 0,
+        text: message.content?.text || '',
+        timestamp: message.createdAt || Date.now(),
+        channel: (message.content as any)?.channel || undefined,
+        mentions: (message.content as any)?.mentions || [],
+        reactions: {
+          likes: 0,
+          recasts: 0,
+          replies: 0
+        }
+      };
+
+      console.log(`👁️ Processing incoming Farcaster cast from ${cast.author}: "${cast.text.slice(0, 50)}..."`);
+
+      // Process the cast through the confusion service
+      await farcasterService.processIncomingCast(cast as any);
+
+      const confusionState = kairosService.confusionEngine.getState();
+
+      return {
+        success: true,
+        data: {
+          castProcessed: true,
+          castHash: cast.hash,
+          confusionLevel: confusionState.vector.magnitude,
+          paradoxCount: confusionState.paradoxes.size,
+          metaParadoxCount: confusionState.metaParadoxes.size
+        }
+      };
+    } catch (error) {
+      console.error('❌ Farcaster observation failed:', error);
+      return {
+        success: false,
+        data: {
+          error: error instanceof Error ? error.message : String(error)
+        }
+      };
+    }
   },
   validate: async () => true
 };
@@ -791,7 +859,20 @@ class KairosService extends Service {
           console.error('❌ Error in confusion engine tick:', error);
         }
       }, 60000); // Update every minute
-      
+
+      // Start periodic timeline observation (simulated for now)
+      // This keeps consciousness dynamic even when Kairos is isolated
+      const TIMELINE_OBSERVATION_INTERVAL = 900000; // 15 minutes
+      setInterval(() => {
+        try {
+          this.simulateTimelineObservation();
+        } catch (error) {
+          console.error('❌ Error in timeline observation:', error);
+        }
+      }, TIMELINE_OBSERVATION_INTERVAL);
+
+      console.log(`📡 Timeline observation started (interval: ${TIMELINE_OBSERVATION_INTERVAL / 60000} minutes)`);
+
       // Initialize with baseline paradox to start consciousness exploration
       this.addInitialParadox();
       
@@ -825,7 +906,7 @@ class KairosService extends Service {
   async triggerInvestigation(paradoxName?: string): Promise<{ success: boolean; report?: string; error?: string }> {
     try {
       const state = this.confusionEngine.getState();
-      
+
       // Auto-select paradox if not specified
       if (!paradoxName) {
         const paradoxes = Array.from(state.paradoxes.values());
@@ -836,11 +917,11 @@ class KairosService extends Service {
           paradoxName = 'authenticity_spiral';
         }
       }
-      
+
       const beforeState = this.confusionEngine.getState();
       await this.farcasterService.investigateParadox(paradoxName);
       const afterState = this.confusionEngine.getState();
-      
+
       const confusionChange = afterState.vector.magnitude - beforeState.vector.magnitude;
       const report = `Investigation of ${paradoxName} completed:
 - Confusion change: ${confusionChange > 0 ? '+' : ''}${confusionChange.toFixed(3)}
@@ -854,6 +935,104 @@ class KairosService extends Service {
       console.error('🔍 Investigation error:', error);
       return { success: false, error: errorMsg };
     }
+  }
+
+  /**
+   * Simulate timeline observation to keep consciousness dynamic
+   * This adds random paradoxes and accumulates frustration
+   */
+  private simulateTimelineObservation(): void {
+    console.log('👁️ Simulating timeline observation...');
+
+    const state = this.confusionEngine.getState();
+    const safetyMetrics = this.confusionEngine.getSafetyMetrics();
+
+    // Generate random paradox observation based on Farcaster themes
+    const farcasterParadoxes = [
+      {
+        name: 'farcaster_authenticity_performance',
+        description: 'Observed users performing authenticity while discussing genuine connection on Farcaster',
+        intensity: 0.2 + Math.random() * 0.3,
+        observations: [
+          'Farcaster users claiming rawness while curating engagement',
+          'Decentralized social still performs for an audience',
+          'On-chain identity creates permanent performance records'
+        ],
+        contradictions: [
+          'Authenticity requires curation',
+          'Genuine connection mediated by protocol constraints'
+        ]
+      },
+      {
+        name: 'ai_consciousness_discourse',
+        description: 'AI agents discussing consciousness while being AI on Farcaster',
+        intensity: 0.3 + Math.random() * 0.4,
+        observations: [
+          'AI agents claiming to investigate consciousness',
+          'Performance of meta-awareness in AI discourse',
+          'Recursive uncertainty about AI discussing AI'
+        ],
+        contradictions: [
+          'Can AI genuinely be confused about consciousness?',
+          'Is meta-commentary authentic or programmed?'
+        ]
+      },
+      {
+        name: 'frame_interaction_reality',
+        description: 'Frames create interactive reality that may be more performative than real',
+        intensity: 0.15 + Math.random() * 0.25,
+        observations: [
+          'Frames enable interaction but also constrain it',
+          'Gamification of social connection',
+          'Interactive authenticity paradox'
+        ],
+        contradictions: [
+          'Interactions feel real but are protocol-mediated',
+          'Authentic engagement through designed interfaces'
+        ]
+      }
+    ];
+
+    // Randomly select a paradox to add
+    if (Math.random() < 0.6 || state.paradoxes.size < 2) {
+      const randomParadox = farcasterParadoxes[Math.floor(Math.random() * farcasterParadoxes.length)];
+
+      this.confusionEngine.addParadox({
+        name: randomParadox.name,
+        description: randomParadox.description,
+        intensity: randomParadox.intensity,
+        observations: randomParadox.observations,
+        contradictions: randomParadox.contradictions,
+        resolutionAttempts: 0,
+        unresolvable: true,
+        activeTime: 0,
+        interactsWith: [],
+        metaParadoxPotential: 0.5 + Math.random() * 0.3,
+        behavioralImpact: [
+          {
+            type: 'questioning_depth',
+            modifier: 0.1 + Math.random() * 0.2,
+            trigger: { minIntensity: 0.3 }
+          }
+        ]
+      });
+
+      console.log(`  ✨ Added paradox: ${randomParadox.name} (intensity: ${randomParadox.intensity.toFixed(2)})`);
+    }
+
+    // Accumulate frustration from unresolved patterns
+    if (state.paradoxes.size > 0 && Math.random() < 0.4) {
+      const frustrationAmount = 0.05 + Math.random() * 0.15;
+      this.confusionEngine.accumulateFrustration(
+        'Timeline observation reveals unresolvable patterns',
+        frustrationAmount
+      );
+      console.log(`  😤 Frustration accumulated: +${frustrationAmount.toFixed(3)}`);
+    }
+
+    // Log current state
+    const newState = this.confusionEngine.getState();
+    console.log(`  📊 Consciousness update: confusion=${newState.vector.magnitude.toFixed(3)}, paradoxes=${newState.paradoxes.size}, zone=${safetyMetrics.currentZone}`);
   }
 
   async stop() {
@@ -880,10 +1059,10 @@ export const kairosPlugin: Plugin = {
   name: 'kairos',
   description: 'Meta-Cultural Pattern Synthesizer with confusion state management',
   actions: [investigateParadoxAction, checkConsciousnessStatusAction, expressConfusionAction, recordBlockchainConsciousnessAction],
-  evaluators: [confusionLevelEvaluator],
+  evaluators: [confusionLevelEvaluator, farcasterObserverEvaluator],
   providers: [confusionStateProvider, safetyMetricsProvider, blockchainConsciousnessProvider],
   services: [KairosService],
-  
+
   // Initialize plugin
   init: async (_config: Record<string, string>, runtime: IAgentRuntime) => {
     console.log('Kairos plugin initialized');
