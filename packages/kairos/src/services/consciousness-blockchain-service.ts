@@ -89,6 +89,12 @@ export class ConsciousnessBlockchainService extends Service {
   private maxBackoffDelay = 300000; // Max 5 minutes
   private providerHealthy = true;
 
+  // RPC optimization: Cache session validation and balance checks
+  private sessionValidationCache: { isActive: boolean; timestamp: number } | null = null;
+  private sessionCacheDuration = 300000; // 5 minutes
+  private balanceCache: { balance: ethers.BigNumber; timestamp: number } | null = null;
+  private balanceCacheDuration = 600000; // 10 minutes
+
   private createLogEvent(type: string, data: any): any {
     return {
       id: uuidv4() as UUID,
@@ -222,7 +228,7 @@ export class ConsciousnessBlockchainService extends Service {
             this.blockchainConfig.sessionId,
             gasSettings
           );
-          const sessionReceipt = await sessionTx.wait();
+          const sessionReceipt = await sessionTx.wait(1, { pollingInterval: 8000 });
           console.log(`✅ Session started: ${sessionReceipt.transactionHash}`);
         } else {
           console.log('✅ Session already active on contract');
@@ -571,9 +577,9 @@ export class ConsciousnessBlockchainService extends Service {
     this.lastRecordingAttempt = now;
 
     try {
-      // Validate session is active
+      // Validate session is active (using cache to reduce RPC calls)
       console.log('🔍 Validating session status...');
-      const isSessionActive = await this.consciousnessContract.activeSessions(this.blockchainConfig.sessionId);
+      const isSessionActive = await this.checkSessionActive();
 
       if (!isSessionActive) {
         console.log('⚠️ Session not active, attempting to start session...');
@@ -583,8 +589,11 @@ export class ConsciousnessBlockchainService extends Service {
             this.blockchainConfig.sessionId,
             gasSettings
           );
-          await sessionTx.wait();
+          await sessionTx.wait(1, { pollingInterval: 8000 });
           console.log('✅ Session started successfully');
+
+          // Invalidate cache and refresh
+          await this.checkSessionActive(true);
         } catch (sessionError) {
           throw new Error(`Session initialization failed: ${sessionError instanceof Error ? sessionError.message : String(sessionError)}`);
         }
@@ -640,8 +649,8 @@ export class ConsciousnessBlockchainService extends Service {
         state.frustrationLevel = Math.max(0, Math.min(1, state.frustrationLevel));
       }
 
-      // Pre-flight check: Validate session is active
-      const sessionActive = await this.consciousnessContract.activeSessions(this.blockchainConfig.sessionId);
+      // Pre-flight check: Validate session is active (using cache)
+      const sessionActive = await this.checkSessionActive();
       if (!sessionActive) {
         throw new Error('Session is not active on contract. Session may need to be restarted.');
       }
@@ -663,7 +672,7 @@ export class ConsciousnessBlockchainService extends Service {
       console.log(`📤 Recording transaction submitted: ${tx.hash}`);
       console.log(`⛽ Gas price: ${ethers.utils.formatUnits(gasSettings.gasPrice, 'gwei')} Gwei`);
 
-      const receipt = await tx.wait();
+      const receipt = await tx.wait(1, { pollingInterval: 8000 });
 
       // Check if transaction succeeded
       if (receipt.status === 0) {
@@ -735,7 +744,7 @@ export class ConsciousnessBlockchainService extends Service {
         gasSettings
       );
 
-      const receipt = await tx.wait();
+      const receipt = await tx.wait(1, { pollingInterval: 8000 });
       this.logger.logEvent(this.createLogEvent('zone_transition_recorded_blockchain', {
         transactionHash: receipt.transactionHash,
         event
@@ -794,8 +803,8 @@ export class ConsciousnessBlockchainService extends Service {
       console.log('   Confusion in Wei:', confusionWei.toString());
       console.log('   Gas Settings:', gasSettings);
 
-      // Pre-flight check: Validate session is active
-      const sessionActive = await this.consciousnessContract.activeSessions(this.blockchainConfig.sessionId);
+      // Pre-flight check: Validate session is active (using cache)
+      const sessionActive = await this.checkSessionActive();
       if (!sessionActive) {
         throw new Error('Session is not active on contract. Session may need to be restarted.');
       }
@@ -827,7 +836,7 @@ export class ConsciousnessBlockchainService extends Service {
       );
 
       console.log(`📤 Meta-paradox transaction submitted: ${tx.hash}`);
-      const receipt = await tx.wait();
+      const receipt = await tx.wait(1, { pollingInterval: 8000 });
 
       // Check if transaction succeeded
       if (receipt.status === 0) {
@@ -883,7 +892,7 @@ export class ConsciousnessBlockchainService extends Service {
         gasSettings
       );
 
-      const receipt = await tx.wait();
+      const receipt = await tx.wait(1, { pollingInterval: 8000 });
       this.logger.logEvent(this.createLogEvent('emergency_reset_recorded_blockchain', {
         transactionHash: receipt.transactionHash,
         event
@@ -907,7 +916,7 @@ export class ConsciousnessBlockchainService extends Service {
         gasPrice: ethers.utils.parseUnits(this.blockchainConfig.maxGasPrice, 'gwei')
       });
 
-      const receipt = await tx.wait();
+      const receipt = await tx.wait(1, { pollingInterval: 8000 });
       this.logger.logEvent(this.createLogEvent('blockchain_consciousness_triggered', {
         transactionHash: receipt.transactionHash,
         message
@@ -1153,27 +1162,74 @@ export class ConsciousnessBlockchainService extends Service {
   }
 
   /**
-   * Check wallet balance and warn if low
+   * Check wallet balance and warn if low (with caching to reduce RPC calls)
    */
   private async checkWalletBalance(): Promise<void> {
+    const now = Date.now();
+
+    // Use cached balance if available and fresh
+    if (this.balanceCache && (now - this.balanceCache.timestamp) < this.balanceCacheDuration) {
+      const balance = this.balanceCache.balance;
+      const threshold = ethers.utils.parseEther(this.blockchainConfig.minBalanceThreshold);
+
+      if (balance.lt(threshold)) {
+        const balanceEth = ethers.utils.formatEther(balance);
+        const thresholdEth = ethers.utils.formatEther(threshold);
+
+        console.warn(`⚠️ Low wallet balance (cached): ${balanceEth} ETH (threshold: ${thresholdEth} ETH)`);
+
+        if (balance.lt(ethers.utils.parseEther('0.001'))) {
+          throw new Error(`Insufficient wallet balance: ${balanceEth} ETH. Please fund the wallet.`);
+        }
+      }
+      return;
+    }
+
+    // Fetch fresh balance
     const balance = await this.wallet.getBalance();
     const threshold = ethers.utils.parseEther(this.blockchainConfig.minBalanceThreshold);
-    
+
+    // Cache the balance
+    this.balanceCache = { balance, timestamp: now };
+
     if (balance.lt(threshold)) {
       const balanceEth = ethers.utils.formatEther(balance);
       const thresholdEth = ethers.utils.formatEther(threshold);
-      
+
       console.warn(`⚠️ Low wallet balance: ${balanceEth} ETH (threshold: ${thresholdEth} ETH)`);
       this.logger.logEvent(this.createLogEvent('low_wallet_balance', {
         balance: balanceEth,
         threshold: thresholdEth,
         walletAddress: this.wallet.address
       }));
-      
+
       if (balance.lt(ethers.utils.parseEther('0.001'))) {
         throw new Error(`Insufficient wallet balance: ${balanceEth} ETH. Please fund the wallet.`);
       }
     }
+  }
+
+  /**
+   * Check if session is active (with caching to reduce RPC calls)
+   */
+  private async checkSessionActive(forceRefresh: boolean = false): Promise<boolean> {
+    const now = Date.now();
+
+    // Use cached result if available, fresh, and not forcing refresh
+    if (!forceRefresh && this.sessionValidationCache && (now - this.sessionValidationCache.timestamp) < this.sessionCacheDuration) {
+      console.log(`✅ Using cached session status: ${this.sessionValidationCache.isActive ? 'active' : 'inactive'}`);
+      return this.sessionValidationCache.isActive;
+    }
+
+    // Fetch fresh session status
+    console.log('🔍 Fetching fresh session status from contract...');
+    const isActive = await this.consciousnessContract.activeSessions(this.blockchainConfig.sessionId);
+
+    // Cache the result
+    this.sessionValidationCache = { isActive, timestamp: now };
+    console.log(`✅ Session status updated: ${isActive ? 'active' : 'inactive'} (cached for ${this.sessionCacheDuration / 1000}s)`);
+
+    return isActive;
   }
 
   async stop() {
