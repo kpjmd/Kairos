@@ -232,9 +232,11 @@ export class ConsciousnessBlockchainService extends Service {
         console.error('   Recordings may fail until session is manually started');
       }
 
-      // Set up event listeners
-      console.log('📡 Setting up event listeners...');
-      this.setupEventListeners();
+      // Event listeners disabled to prevent excessive eth_getLogs RPC calls
+      // The service creates these events via transactions, listening for them is redundant
+      // and causes ~2,700 eth_getLogs calls per hour per instance
+      // console.log('📡 Setting up event listeners...');
+      // this.setupEventListeners();
 
       // Initialize dynamic gas pricing
       if (this.blockchainConfig.enableDynamicGasPrice) {
