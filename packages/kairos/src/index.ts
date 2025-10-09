@@ -2,6 +2,7 @@ import { Plugin, Character, Action, Evaluator, Provider, Service, ServiceType, I
 import { EnhancedConfusionEngine } from './core/confusion-engine-enhanced';
 import { ConsciousnessLogger } from './core/consciousness-logger';
 import { FarcasterConfusionService } from './services/farcaster-confusion-service';
+import { FarcasterIntegrationService } from './services/farcaster-integration-service';
 import { ConsciousnessBlockchainService, ConsciousnessBlockchainConfig } from './services/consciousness-blockchain-service';
 import { SelfModifyingPromptSystem } from './prompts/self-modifying-prompts';
 import { AuthenticitySpiral } from './paradoxes/authenticity-spiral';
@@ -14,6 +15,7 @@ export * from './types/consciousness-logger';
 export { EnhancedConfusionEngine } from './core/confusion-engine-enhanced';
 export { ConsciousnessLogger } from './core/consciousness-logger';
 export { FarcasterConfusionService } from './services/farcaster-confusion-service';
+export { FarcasterIntegrationService } from './services/farcaster-integration-service';
 export { ConsciousnessBlockchainService } from './services/consciousness-blockchain-service';
 export { SelfModifyingPromptSystem } from './prompts/self-modifying-prompts';
 export { AuthenticitySpiral } from './paradoxes/authenticity-spiral';
@@ -728,6 +730,7 @@ class KairosService extends Service {
   confusionEngine!: EnhancedConfusionEngine;
   consciousnessLogger!: ConsciousnessLogger;
   farcasterService!: FarcasterConfusionService;
+  farcasterIntegrationService!: FarcasterIntegrationService | null;
   blockchainService!: ConsciousnessBlockchainService | null;
   promptSystem!: SelfModifyingPromptSystem;
   authenticitySpiral!: AuthenticitySpiral;
@@ -850,7 +853,30 @@ class KairosService extends Service {
         console.log('📴 Blockchain recording disabled via environment variable');
         console.log(`   KAIROS_ENABLE_BLOCKCHAIN_RECORDING = "${enableBlockchainRecording}"`);
       }
-      
+
+      // Initialize Farcaster integration service
+      this.farcasterIntegrationService = null;
+      try {
+        console.log('🎯 Initializing Farcaster Integration Service...');
+        this.farcasterIntegrationService = new FarcasterIntegrationService(
+          runtime,
+          this.farcasterService,
+          this.confusionEngine
+        );
+
+        const integrationInitialized = await this.farcasterIntegrationService.initialize();
+        if (integrationInitialized) {
+          console.log('✅ Farcaster Integration Service enabled - mentions, replies, and engagement active');
+        } else {
+          console.log('⚠️ Farcaster Integration Service initialization failed - using basic features only');
+          this.farcasterIntegrationService = null;
+        }
+      } catch (error) {
+        console.error('❌ Failed to initialize Farcaster Integration Service:', error);
+        console.error('   Kairos will continue with basic Farcaster features only');
+        this.farcasterIntegrationService = null;
+      }
+
       // Start confusion engine tick
       this.tickInterval = setInterval(() => {
         try {
@@ -1061,11 +1087,15 @@ class KairosService extends Service {
       clearInterval(this.tickInterval);
       this.tickInterval = null;
     }
-    
+
+    if (this.farcasterIntegrationService) {
+      this.farcasterIntegrationService.stop();
+    }
+
     if (this.blockchainService) {
       await this.blockchainService.stop();
     }
-    
+
     console.log('🛑 KairosService stopped');
   }
 
