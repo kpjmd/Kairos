@@ -128,9 +128,11 @@ export class FarcasterIntegrationService {
       // Start polling for mentions
       this.startMentionPolling();
 
-      // Start channel posting if configured
-      if (this.config.monitoredChannels.length > 0) {
+      // Start channel posting if configured and auto-posting is enabled
+      if (this.config.monitoredChannels.length > 0 && ENV_CONFIG.autoPostingEnabled) {
         this.startChannelPosting();
+      } else if (!ENV_CONFIG.autoPostingEnabled) {
+        console.log('📴 Channel auto-posting disabled via FARCASTER_AUTO_POSTING environment variable');
       }
 
       console.log('✅ Farcaster Integration Service initialized successfully');
