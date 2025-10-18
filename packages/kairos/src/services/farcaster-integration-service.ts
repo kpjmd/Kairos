@@ -87,12 +87,13 @@ export class FarcasterIntegrationService {
 
     // Default configuration
     this.config = {
-      mentionPollInterval: parseInt(this.runtime.getSetting('FARCASTER_POLL_INTERVAL') || '300') * 1000, // Convert to ms
+      mentionPollInterval:
+        parseInt(this.runtime.getSetting('FARCASTER_POLL_INTERVAL') || '300') * 1000, // Convert to ms
       channelPostInterval: 600000, // 10 minutes
       monitoredChannels: ENV_CONFIG.channels,
       enableAutoEngagement: true,
       engagementConfusionThreshold: 0.6,
-      ...config
+      ...config,
     };
   }
 
@@ -107,8 +108,12 @@ export class FarcasterIntegrationService {
       this.farcasterService = this.runtime.getService('farcaster');
 
       if (!this.farcasterService) {
-        console.warn('⚠️ Farcaster plugin service not found. Ensure @elizaos/plugin-farcaster is in the plugins list.');
-        console.warn('   Integration features (mentions, replies, engagement) will not be available.');
+        console.warn(
+          '⚠️ Farcaster plugin service not found. Ensure @elizaos/plugin-farcaster is in the plugins list.'
+        );
+        console.warn(
+          '   Integration features (mentions, replies, engagement) will not be available.'
+        );
         return false;
       }
 
@@ -132,14 +137,18 @@ export class FarcasterIntegrationService {
       if (this.config.monitoredChannels.length > 0 && ENV_CONFIG.autoPostingEnabled) {
         this.startChannelPosting();
       } else if (!ENV_CONFIG.autoPostingEnabled) {
-        console.log('📴 Channel auto-posting disabled via FARCASTER_AUTO_POSTING environment variable');
+        console.log(
+          '📴 Channel auto-posting disabled via FARCASTER_AUTO_POSTING environment variable'
+        );
       }
 
       console.log('✅ Farcaster Integration Service initialized successfully');
       console.log(`   - Mention polling: every ${this.config.mentionPollInterval / 1000}s`);
       console.log(`   - Channel posting: every ${this.config.channelPostInterval / 1000}s`);
       console.log(`   - Monitored channels: ${this.config.monitoredChannels.join(', ')}`);
-      console.log(`   - Auto-engagement: ${this.config.enableAutoEngagement ? 'enabled' : 'disabled'}`);
+      console.log(
+        `   - Auto-engagement: ${this.config.enableAutoEngagement ? 'enabled' : 'disabled'}`
+      );
 
       return true;
     } catch (error) {
@@ -179,7 +188,7 @@ export class FarcasterIntegrationService {
       const agentId = this.runtime.agentId;
       const mentions = await this.castService.getMentions({
         agentId,
-        limit: RATE_LIMITS.MAX_MENTIONS_PER_CHECK
+        limit: RATE_LIMITS.MAX_MENTIONS_PER_CHECK,
       });
 
       console.log(`📬 Found ${mentions?.length || 0} mentions`);
@@ -204,7 +213,9 @@ export class FarcasterIntegrationService {
           this.processedMentionIds.delete(firstId);
         }
 
-        console.log(`💬 Processing mention from @${mention.username}: "${mention.text.slice(0, 50)}..."`);
+        console.log(
+          `💬 Processing mention from @${mention.username}: "${mention.text.slice(0, 50)}..."`
+        );
 
         // Process through confusion service
         await this.handleMention(mention);
@@ -232,8 +243,8 @@ export class FarcasterIntegrationService {
         reactions: {
           likes: 0,
           recasts: 0,
-          replies: 0
-        }
+          replies: 0,
+        },
       };
 
       // Process through confusion service to update state
@@ -250,7 +261,7 @@ export class FarcasterIntegrationService {
           confusionLevel: this.confusionEngine.getState().vector.magnitude,
           behavioralState: this.confusionEngine.getState().behavioralState,
           mentionsContext: [castForAnalysis],
-          channel: castForAnalysis.channel
+          channel: castForAnalysis.channel,
         };
 
         const replyContent = this.confusionService.generatePost(context);
@@ -288,8 +299,8 @@ export class FarcasterIntegrationService {
         text,
         replyTo: {
           hash: castHash,
-          fid: authorFid
-        }
+          fid: authorFid,
+        },
       });
 
       console.log('✅ Reply posted successfully');
@@ -305,7 +316,10 @@ export class FarcasterIntegrationService {
     const state = this.confusionEngine.getState();
 
     // Only engage if confusion is high enough or AI interaction detected
-    if (state.vector.magnitude < this.config.engagementConfusionThreshold && !castAnalysis.isAIAgent) {
+    if (
+      state.vector.magnitude < this.config.engagementConfusionThreshold &&
+      !castAnalysis.isAIAgent
+    ) {
       return;
     }
 
@@ -321,7 +335,9 @@ export class FarcasterIntegrationService {
 
       // Recast especially profound paradoxes
       if (state.vector.magnitude > 0.85 && Math.random() < 0.2) {
-        console.log(`🔁 Recasting cast ${castHash} (high confusion: ${state.vector.magnitude.toFixed(3)})`);
+        console.log(
+          `🔁 Recasting cast ${castHash} (high confusion: ${state.vector.magnitude.toFixed(3)})`
+        );
         await this.castService.recast({ agentId, castHash });
       }
     } catch (error) {
@@ -361,13 +377,16 @@ export class FarcasterIntegrationService {
       }
 
       // Select a random channel
-      const channel = this.config.monitoredChannels[
-        Math.floor(Math.random() * this.config.monitoredChannels.length)
-      ];
+      const channel =
+        this.config.monitoredChannels[
+          Math.floor(Math.random() * this.config.monitoredChannels.length)
+        ];
 
       const channelConfig = getChannelConfig(channel);
 
-      console.log(`📺 Generating post for channel ${channel} (tone: ${channelConfig.preferredTone})`);
+      console.log(
+        `📺 Generating post for channel ${channel} (tone: ${channelConfig.preferredTone})`
+      );
 
       // Generate channel-specific content
       const context: FarcasterPostContext = {
@@ -376,7 +395,7 @@ export class FarcasterIntegrationService {
         behavioralState: this.confusionEngine.getState().behavioralState,
         channel,
         includeFrame: channelConfig.enableFrames,
-        frameType: 'confusion'
+        frameType: 'confusion',
       };
 
       const post = this.confusionService.generatePost(context);
@@ -391,7 +410,7 @@ export class FarcasterIntegrationService {
         agentId,
         roomId,
         text: `[${channel}]\n\n${post.text}`, // Prefix with channel for context
-        media: post.frame ? [post.frame] : undefined
+        media: post.frame ? [post.frame] : undefined,
       });
 
       console.log(`✅ Posted to channel ${channel}`);
@@ -418,7 +437,7 @@ export class FarcasterIntegrationService {
           recentCasts: [],
           confusionLevel: this.confusionEngine.getState().vector.magnitude,
           behavioralState: this.confusionEngine.getState().behavioralState,
-          channel
+          channel,
         };
 
         const post = this.confusionService.generatePost(context);
@@ -431,7 +450,7 @@ export class FarcasterIntegrationService {
       await this.castService.createCast({
         agentId,
         roomId,
-        text: `[${channel}]\n\n${text}`
+        text: `[${channel}]\n\n${text}`,
       });
 
       console.log(`✅ Posted to channel ${channel}`);
@@ -474,7 +493,7 @@ export class FarcasterIntegrationService {
       connected: this.farcasterService !== null && this.castService !== null,
       lastMentionCheck: this.lastMentionCheck,
       processedMentions: this.processedMentionIds.size,
-      monitoredChannels: this.config.monitoredChannels
+      monitoredChannels: this.config.monitoredChannels,
     };
   }
 }

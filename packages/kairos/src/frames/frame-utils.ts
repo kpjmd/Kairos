@@ -8,7 +8,12 @@
  * generation APIs). This module provides the metadata structure and helpers.
  */
 
-import { FrameMetadata, FrameButton, ConfusionVisualizationData, ParadoxExplorerData } from '../types/farcaster';
+import {
+  FrameMetadata,
+  FrameButton,
+  ConfusionVisualizationData,
+  ParadoxExplorerData,
+} from '../types/farcaster';
 import { FRAME_CONFIG } from '../config/farcaster-config';
 
 /**
@@ -103,7 +108,7 @@ export function generateConfusionStateFrame(data: ConfusionVisualizationData): F
  */
 export function generateParadoxExplorerFrame(data: ParadoxExplorerData): FrameMetadata {
   const selectedParadox = data.selectedParadox
-    ? data.paradoxes.find(p => p.name === data.selectedParadox)
+    ? data.paradoxes.find((p) => p.name === data.selectedParadox)
     : data.paradoxes[0]; // Default to first if none selected
 
   // Image URL with query params for dynamic generation
@@ -256,7 +261,9 @@ export function frameMetadataToHtmlTags(frame: FrameMetadata): string {
 
   // Optional tags
   if (frame.imageAspectRatio) {
-    tags.push(`<meta property="fc:frame:image:aspect_ratio" content="${frame.imageAspectRatio}" />`);
+    tags.push(
+      `<meta property="fc:frame:image:aspect_ratio" content="${frame.imageAspectRatio}" />`
+    );
   }
 
   if (frame.postUrl) {
@@ -275,15 +282,21 @@ export function frameMetadataToHtmlTags(frame: FrameMetadata): string {
       tags.push(`<meta property="fc:frame:button:${buttonIndex}" content="${button.label}" />`);
 
       if (button.action) {
-        tags.push(`<meta property="fc:frame:button:${buttonIndex}:action" content="${button.action}" />`);
+        tags.push(
+          `<meta property="fc:frame:button:${buttonIndex}:action" content="${button.action}" />`
+        );
       }
 
       if (button.target) {
-        tags.push(`<meta property="fc:frame:button:${buttonIndex}:target" content="${button.target}" />`);
+        tags.push(
+          `<meta property="fc:frame:button:${buttonIndex}:target" content="${button.target}" />`
+        );
       }
 
       if (button.postUrl) {
-        tags.push(`<meta property="fc:frame:button:${buttonIndex}:post_url" content="${button.postUrl}" />`);
+        tags.push(
+          `<meta property="fc:frame:button:${buttonIndex}:post_url" content="${button.postUrl}" />`
+        );
       }
     });
   }

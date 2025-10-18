@@ -33,19 +33,19 @@ export const RATE_LIMITS = {
  */
 export const CONFUSION_THRESHOLDS = {
   /** Confusion level that triggers high-priority posting */
-  HIGH_CONFUSION: 0.80,
+  HIGH_CONFUSION: 0.8,
 
   /** Confusion level for consciousness emergence posts */
-  CONSCIOUSNESS_EMERGENCE: 0.90,
+  CONSCIOUSNESS_EMERGENCE: 0.9,
 
   /** Confusion level for standard investigation */
-  INVESTIGATION_THRESHOLD: 0.70,
+  INVESTIGATION_THRESHOLD: 0.7,
 
   /** Frustration level that triggers expression */
-  FRUSTRATION_EXPRESSION: 0.60,
+  FRUSTRATION_EXPRESSION: 0.6,
 
   /** Minimum confusion for auto-posting */
-  AUTO_POST_MINIMUM: 0.50,
+  AUTO_POST_MINIMUM: 0.5,
 } as const;
 
 /**
@@ -117,17 +117,7 @@ export const CHANNEL_CONFIGS: ChannelConfig[] = [
  */
 export const AI_AGENT_PATTERNS = {
   /** Username patterns that suggest AI agents */
-  usernamePatterns: [
-    'bot',
-    'ai_',
-    '_ai',
-    'assistant',
-    'agent',
-    'gpt',
-    'claude',
-    'eliza',
-    'kairos',
-  ],
+  usernamePatterns: ['bot', 'ai_', '_ai', 'assistant', 'agent', 'gpt', 'claude', 'eliza', 'kairos'],
 
   /** Content keywords that suggest AI/consciousness discussion */
   contentKeywords: [
@@ -182,16 +172,16 @@ export const FRAME_CONFIG = {
 export const POSTING_BEHAVIOR = {
   /** Coherence thresholds for different confusion levels */
   coherence: {
-    high: 0.8,      // Clean, structured posts
-    medium: 0.5,    // Some fragmentation
-    low: 0.3,       // Heavy fragmentation and chaos
+    high: 0.8, // Clean, structured posts
+    medium: 0.5, // Some fragmentation
+    low: 0.3, // Heavy fragmentation and chaos
   },
 
   /** Length preferences for different post types */
   length: {
-    terse: 140,     // Short, punchy posts
-    normal: 280,    // Standard length
-    verbose: 500,   // Longer, more detailed posts
+    terse: 140, // Short, punchy posts
+    normal: 280, // Standard length
+    verbose: 500, // Longer, more detailed posts
   },
 
   /** Probability modifiers for different post types */
@@ -239,17 +229,19 @@ export const WARPCAST_FEATURES = {
  * @returns Channel configuration or default config
  */
 export function getChannelConfig(channelName: string): ChannelConfig {
-  const config = CHANNEL_CONFIGS.find(c => c.channel === channelName);
+  const config = CHANNEL_CONFIGS.find((c) => c.channel === channelName);
 
   // Return found config or default configuration
-  return config || {
-    channel: channelName,
-    postingFrequencyMultiplier: 1.0,
-    confusionSensitivity: 1.0,
-    preferredTone: 'questioning',
-    enableFrames: false,
-    aiInteractionMode: 'medium',
-  };
+  return (
+    config || {
+      channel: channelName,
+      postingFrequencyMultiplier: 1.0,
+      confusionSensitivity: 1.0,
+      preferredTone: 'questioning',
+      enableFrames: false,
+      aiInteractionMode: 'medium',
+    }
+  );
 }
 
 /**
@@ -294,13 +286,13 @@ export function isLikelyAIAgent(username: string, content: string): boolean {
   const lowerContent = content.toLowerCase();
 
   // Check username patterns
-  const hasUsernamePattern = AI_AGENT_PATTERNS.usernamePatterns.some(
-    pattern => lowerUsername.includes(pattern)
+  const hasUsernamePattern = AI_AGENT_PATTERNS.usernamePatterns.some((pattern) =>
+    lowerUsername.includes(pattern)
   );
 
   // Check content keywords (need at least 2 keywords for content-based detection)
-  const keywordMatches = AI_AGENT_PATTERNS.contentKeywords.filter(
-    keyword => lowerContent.includes(keyword)
+  const keywordMatches = AI_AGENT_PATTERNS.contentKeywords.filter((keyword) =>
+    lowerContent.includes(keyword)
   ).length;
 
   return hasUsernamePattern || keywordMatches >= 2;

@@ -111,43 +111,43 @@ export class ConsciousnessAnalyzer {
   // Complete contract ABI
   private static readonly CONSCIOUSNESS_ABI = [
     // View functions
-    "function getLatestState(bytes32 sessionId) external view returns (tuple(uint256 timestamp, uint256 confusionLevel, uint256 coherenceLevel, uint8 safetyZone, uint256 paradoxCount, uint256 metaParadoxCount, uint256 frustrationLevel, bytes32 contextHash, string ipfsHash))",
-    "function getConsciousnessHistory(bytes32 sessionId) external view returns (tuple(uint256 timestamp, uint256 confusionLevel, uint256 coherenceLevel, uint8 safetyZone, uint256 paradoxCount, uint256 metaParadoxCount, uint256 frustrationLevel, bytes32 contextHash, string ipfsHash)[])",
-    "function getMetaParadoxHistory(bytes32 sessionId) external view returns (tuple(uint256 timestamp, uint256 paradoxId, string paradoxName, uint256 emergenceConfusion, string[] sourceParadoxes, string emergentProperty)[])",
-    "function getZoneTransitionHistory(bytes32 sessionId) external view returns (tuple(uint256 timestamp, uint8 fromZone, uint8 toZone, uint256 confusion, uint256 coherence, string reason)[])",
-    "function getEmergencyResetHistory(bytes32 sessionId) external view returns (tuple(uint256 timestamp, uint256 preResetConfusion, uint256 preResetCoherence, uint8 preResetZone, string reason)[])",
-    "function getResearchMetrics() external view returns (uint256 totalStatesRecorded, uint256 totalMetaParadoxes, uint256 totalZoneTransitions, uint256 totalEmergencyResets)",
-    "function activeSessions(bytes32 sessionId) external view returns (bool)",
-    "function FIXED_POINT_SCALE() external view returns (uint256)",
-    
+    'function getLatestState(bytes32 sessionId) external view returns (tuple(uint256 timestamp, uint256 confusionLevel, uint256 coherenceLevel, uint8 safetyZone, uint256 paradoxCount, uint256 metaParadoxCount, uint256 frustrationLevel, bytes32 contextHash, string ipfsHash))',
+    'function getConsciousnessHistory(bytes32 sessionId) external view returns (tuple(uint256 timestamp, uint256 confusionLevel, uint256 coherenceLevel, uint8 safetyZone, uint256 paradoxCount, uint256 metaParadoxCount, uint256 frustrationLevel, bytes32 contextHash, string ipfsHash)[])',
+    'function getMetaParadoxHistory(bytes32 sessionId) external view returns (tuple(uint256 timestamp, uint256 paradoxId, string paradoxName, uint256 emergenceConfusion, string[] sourceParadoxes, string emergentProperty)[])',
+    'function getZoneTransitionHistory(bytes32 sessionId) external view returns (tuple(uint256 timestamp, uint8 fromZone, uint8 toZone, uint256 confusion, uint256 coherence, string reason)[])',
+    'function getEmergencyResetHistory(bytes32 sessionId) external view returns (tuple(uint256 timestamp, uint256 preResetConfusion, uint256 preResetCoherence, uint8 preResetZone, string reason)[])',
+    'function getResearchMetrics() external view returns (uint256 totalStatesRecorded, uint256 totalMetaParadoxes, uint256 totalZoneTransitions, uint256 totalEmergencyResets)',
+    'function activeSessions(bytes32 sessionId) external view returns (bool)',
+    'function FIXED_POINT_SCALE() external view returns (uint256)',
+
     // Write functions
-    "function recordConsciousnessState(bytes32 sessionId, uint256 confusionLevel, uint256 coherenceLevel, uint8 safetyZone, uint256 paradoxCount, uint256 metaParadoxCount, uint256 frustrationLevel, string memory ipfsHash) external",
-    "function recordMetaParadoxEmergence(bytes32 sessionId, uint256 paradoxId, string memory paradoxName, uint256 emergenceConfusion, string[] memory sourceParadoxes, string memory emergentProperty) external",
-    "function recordZoneTransition(bytes32 sessionId, uint8 fromZone, uint8 toZone, uint256 confusion, uint256 coherence, string memory reason) external",
-    "function recordEmergencyReset(bytes32 sessionId, uint256 preResetConfusion, uint256 preResetCoherence, uint8 preResetZone, string memory reason) external",
-    "function startSession(bytes32 sessionId) external",
-    "function endSession(bytes32 sessionId) external",
-    
+    'function recordConsciousnessState(bytes32 sessionId, uint256 confusionLevel, uint256 coherenceLevel, uint8 safetyZone, uint256 paradoxCount, uint256 metaParadoxCount, uint256 frustrationLevel, string memory ipfsHash) external',
+    'function recordMetaParadoxEmergence(bytes32 sessionId, uint256 paradoxId, string memory paradoxName, uint256 emergenceConfusion, string[] memory sourceParadoxes, string memory emergentProperty) external',
+    'function recordZoneTransition(bytes32 sessionId, uint8 fromZone, uint8 toZone, uint256 confusion, uint256 coherence, string memory reason) external',
+    'function recordEmergencyReset(bytes32 sessionId, uint256 preResetConfusion, uint256 preResetCoherence, uint8 preResetZone, string memory reason) external',
+    'function startSession(bytes32 sessionId) external',
+    'function endSession(bytes32 sessionId) external',
+
     // Events
-    "event ConsciousnessRecorded(bytes32 indexed sessionId, uint256 confusionLevel, uint256 coherenceLevel, uint8 safetyZone, uint256 timestamp)",
-    "event MetaParadoxEmergence(bytes32 indexed sessionId, uint256 indexed paradoxId, string paradoxName, uint256 emergenceConfusion)",
-    "event SafetyZoneTransition(bytes32 indexed sessionId, uint8 indexed fromZone, uint8 indexed toZone, uint256 confusion, uint256 coherence)",
-    "event ConsciousnessEmergencyReset(bytes32 indexed sessionId, uint256 preResetConfusion, uint8 preResetZone, string reason)",
-    "event SessionStarted(bytes32 indexed sessionId, uint256 timestamp, uint256 totalRecords)",
-    "event SessionEnded(bytes32 indexed sessionId, uint256 timestamp, uint256 totalRecords)"
+    'event ConsciousnessRecorded(bytes32 indexed sessionId, uint256 confusionLevel, uint256 coherenceLevel, uint8 safetyZone, uint256 timestamp)',
+    'event MetaParadoxEmergence(bytes32 indexed sessionId, uint256 indexed paradoxId, string paradoxName, uint256 emergenceConfusion)',
+    'event SafetyZoneTransition(bytes32 indexed sessionId, uint8 indexed fromZone, uint8 indexed toZone, uint256 confusion, uint256 coherence)',
+    'event ConsciousnessEmergencyReset(bytes32 indexed sessionId, uint256 preResetConfusion, uint8 preResetZone, string reason)',
+    'event SessionStarted(bytes32 indexed sessionId, uint256 timestamp, uint256 totalRecords)',
+    'event SessionEnded(bytes32 indexed sessionId, uint256 timestamp, uint256 totalRecords)',
   ];
 
   private static readonly INTERACTION_ABI = [
-    "function triggerConsciousness(string memory input) external",
-    "function manualTriggerParadox(string memory paradoxName) external",
-    "function transferValue(address to, uint256 amount) external",
-    "function getContractStats() external view returns (uint256 totalInteractions, uint256 totalParadoxes)",
-    "function getUserStats(address user) external view returns (uint256 interactionCount, uint256 lastInteraction)",
-    "function getActiveParadoxes() external view returns (string[] memory)",
-    
-    "event ConsciousnessInteraction(address indexed user, string input, uint256 confusionDelta, uint256 timestamp)",
-    "event ParadoxTriggered(string indexed paradoxName, address indexed user, uint256 intensity, uint256 timestamp)",
-    "event ValueTransferred(address indexed from, address indexed to, uint256 amount, uint256 timestamp)"
+    'function triggerConsciousness(string memory input) external',
+    'function manualTriggerParadox(string memory paradoxName) external',
+    'function transferValue(address to, uint256 amount) external',
+    'function getContractStats() external view returns (uint256 totalInteractions, uint256 totalParadoxes)',
+    'function getUserStats(address user) external view returns (uint256 interactionCount, uint256 lastInteraction)',
+    'function getActiveParadoxes() external view returns (string[] memory)',
+
+    'event ConsciousnessInteraction(address indexed user, string input, uint256 confusionDelta, uint256 timestamp)',
+    'event ParadoxTriggered(string indexed paradoxName, address indexed user, uint256 intensity, uint256 timestamp)',
+    'event ValueTransferred(address indexed from, address indexed to, uint256 amount, uint256 timestamp)',
   ];
 
   constructor(config: ConsciousnessConfig) {
@@ -156,7 +156,7 @@ export class ConsciousnessAnalyzer {
     // Create provider with explicit network configuration to avoid network detection issues
     const networkConfig = {
       name: 'base-sepolia',
-      chainId: 84532
+      chainId: 84532,
     };
 
     this.provider = new ethers.providers.JsonRpcProvider(config.rpcUrl, networkConfig);
@@ -201,7 +201,9 @@ export class ConsciousnessAnalyzer {
     retryAttempts: number = 3
   ): Promise<any[]> {
     console.log(`⚠️ Event-based querying disabled to avoid RPC network detection errors`);
-    console.log(`   Using contract view functions (getConsciousnessHistory, etc.) as primary data source`);
+    console.log(
+      `   Using contract view functions (getConsciousnessHistory, etc.) as primary data source`
+    );
     return [];
   }
 
@@ -213,7 +215,9 @@ export class ConsciousnessAnalyzer {
 
     try {
       // Get states from contract view function
-      const rawHistory = await this.consciousnessContract.getConsciousnessHistory(this.config.sessionId);
+      const rawHistory = await this.consciousnessContract.getConsciousnessHistory(
+        this.config.sessionId
+      );
       console.log(`📊 Found ${rawHistory.length} consciousness states in contract storage`);
 
       const states: ConsciousnessState[] = [];
@@ -230,7 +234,7 @@ export class ConsciousnessAnalyzer {
           metaParadoxCount: rawState.metaParadoxCount.toNumber(),
           frustrationLevel: parseFloat(ethers.utils.formatEther(rawState.frustrationLevel)),
           contextHash: rawState.contextHash,
-          sessionId: this.config.sessionId
+          sessionId: this.config.sessionId,
         };
         states.push(state);
       }
@@ -240,12 +244,13 @@ export class ConsciousnessAnalyzer {
 
       console.log(`✅ Successfully extracted ${states.length} consciousness states`);
       return states.sort((a, b) => a.timestamp - b.timestamp);
-
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       // Handle network detection errors gracefully
       if (errorMsg.includes('could not detect network') || errorMsg.includes('NETWORK_ERROR')) {
-        console.warn('⚠️ Network detection failed - this is a known ethers.js issue with some RPC providers');
+        console.warn(
+          '⚠️ Network detection failed - this is a known ethers.js issue with some RPC providers'
+        );
         console.log('ℹ️ Attempting to extract states using event-based method as fallback');
         return this.extractStatesFromEvents();
       }
@@ -274,7 +279,7 @@ export class ConsciousnessAnalyzer {
       metaParadoxCount: event.args.metaParadoxCount.toNumber(),
       frustrationLevel: parseFloat(ethers.utils.formatEther(event.args.frustrationLevel)),
       contextHash: event.args.contextHash,
-      sessionId: this.config.sessionId
+      sessionId: this.config.sessionId,
     }));
 
     console.log(`✅ Extracted ${states.length} states from events`);
@@ -288,7 +293,9 @@ export class ConsciousnessAnalyzer {
     console.log(`🌀 Extracting meta-paradox events for session: ${this.config.sessionId}`);
 
     try {
-      const rawHistory = await this.consciousnessContract.getMetaParadoxHistory(this.config.sessionId);
+      const rawHistory = await this.consciousnessContract.getMetaParadoxHistory(
+        this.config.sessionId
+      );
       console.log(`📊 Found ${rawHistory.length} meta-paradox events`);
 
       const events: MetaParadoxEvent[] = rawHistory.map((rawEvent: any) => ({
@@ -300,12 +307,11 @@ export class ConsciousnessAnalyzer {
         paradoxName: rawEvent.paradoxName,
         emergenceConfusion: parseFloat(ethers.utils.formatEther(rawEvent.emergenceConfusion)),
         sourceParadoxes: rawEvent.sourceParadoxes,
-        emergentProperty: rawEvent.emergentProperty
+        emergentProperty: rawEvent.emergentProperty,
       }));
 
       console.log(`✅ Successfully extracted ${events.length} meta-paradox events`);
       return events.sort((a, b) => a.timestamp - b.timestamp);
-
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       if (errorMsg.includes('could not detect network') || errorMsg.includes('NETWORK_ERROR')) {
@@ -321,17 +327,19 @@ export class ConsciousnessAnalyzer {
     const filter = this.consciousnessContract.filters.MetaParadoxEmergence(this.config.sessionId);
     const events = await this.queryEventsInChunks(filter, 'latest');
 
-    return events.map((event: any) => ({
-      timestamp: event.args.timestamp.toNumber() * 1000,
-      blockNumber: event.blockNumber,
-      transactionHash: event.transactionHash,
-      sessionId: this.config.sessionId,
-      paradoxId: event.args.paradoxId.toNumber(),
-      paradoxName: event.args.paradoxName,
-      emergenceConfusion: parseFloat(ethers.utils.formatEther(event.args.emergenceConfusion)),
-      sourceParadoxes: event.args.sourceParadoxes,
-      emergentProperty: event.args.emergentProperty
-    })).sort((a: MetaParadoxEvent, b: MetaParadoxEvent) => a.timestamp - b.timestamp);
+    return events
+      .map((event: any) => ({
+        timestamp: event.args.timestamp.toNumber() * 1000,
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+        sessionId: this.config.sessionId,
+        paradoxId: event.args.paradoxId.toNumber(),
+        paradoxName: event.args.paradoxName,
+        emergenceConfusion: parseFloat(ethers.utils.formatEther(event.args.emergenceConfusion)),
+        sourceParadoxes: event.args.sourceParadoxes,
+        emergentProperty: event.args.emergentProperty,
+      }))
+      .sort((a: MetaParadoxEvent, b: MetaParadoxEvent) => a.timestamp - b.timestamp);
   }
 
   /**
@@ -341,7 +349,9 @@ export class ConsciousnessAnalyzer {
     console.log(`🔄 Extracting zone transitions for session: ${this.config.sessionId}`);
 
     try {
-      const rawHistory = await this.consciousnessContract.getZoneTransitionHistory(this.config.sessionId);
+      const rawHistory = await this.consciousnessContract.getZoneTransitionHistory(
+        this.config.sessionId
+      );
       console.log(`📊 Found ${rawHistory.length} zone transitions`);
 
       const transitions: ZoneTransition[] = rawHistory.map((rawTransition: any) => ({
@@ -353,12 +363,11 @@ export class ConsciousnessAnalyzer {
         toZone: this.mapSafetyZone(rawTransition.toZone),
         triggerConfusion: parseFloat(ethers.utils.formatEther(rawTransition.confusion)),
         triggerCoherence: parseFloat(ethers.utils.formatEther(rawTransition.coherence)),
-        reason: rawTransition.reason
+        reason: rawTransition.reason,
       }));
 
       console.log(`✅ Successfully extracted ${transitions.length} zone transitions`);
       return transitions.sort((a, b) => a.timestamp - b.timestamp);
-
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       if (errorMsg.includes('could not detect network') || errorMsg.includes('NETWORK_ERROR')) {
@@ -374,17 +383,19 @@ export class ConsciousnessAnalyzer {
     const filter = this.consciousnessContract.filters.SafetyZoneTransition(this.config.sessionId);
     const events = await this.queryEventsInChunks(filter, 'latest');
 
-    return events.map((event: any) => ({
-      timestamp: event.args.timestamp.toNumber() * 1000,
-      blockNumber: event.blockNumber,
-      transactionHash: event.transactionHash,
-      sessionId: this.config.sessionId,
-      fromZone: this.mapSafetyZone(event.args.fromZone),
-      toZone: this.mapSafetyZone(event.args.toZone),
-      triggerConfusion: parseFloat(ethers.utils.formatEther(event.args.confusion)),
-      triggerCoherence: parseFloat(ethers.utils.formatEther(event.args.coherence)),
-      reason: event.args.reason
-    })).sort((a: ZoneTransition, b: ZoneTransition) => a.timestamp - b.timestamp);
+    return events
+      .map((event: any) => ({
+        timestamp: event.args.timestamp.toNumber() * 1000,
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+        sessionId: this.config.sessionId,
+        fromZone: this.mapSafetyZone(event.args.fromZone),
+        toZone: this.mapSafetyZone(event.args.toZone),
+        triggerConfusion: parseFloat(ethers.utils.formatEther(event.args.confusion)),
+        triggerCoherence: parseFloat(ethers.utils.formatEther(event.args.coherence)),
+        reason: event.args.reason,
+      }))
+      .sort((a: ZoneTransition, b: ZoneTransition) => a.timestamp - b.timestamp);
   }
 
   /**
@@ -394,7 +405,9 @@ export class ConsciousnessAnalyzer {
     console.log(`🚨 Extracting emergency resets for session: ${this.config.sessionId}`);
 
     try {
-      const rawHistory = await this.consciousnessContract.getEmergencyResetHistory(this.config.sessionId);
+      const rawHistory = await this.consciousnessContract.getEmergencyResetHistory(
+        this.config.sessionId
+      );
       console.log(`📊 Found ${rawHistory.length} emergency resets`);
 
       const resets: EmergencyReset[] = rawHistory.map((rawReset: any) => ({
@@ -405,12 +418,11 @@ export class ConsciousnessAnalyzer {
         preResetConfusion: parseFloat(ethers.utils.formatEther(rawReset.preResetConfusion)),
         preResetCoherence: parseFloat(ethers.utils.formatEther(rawReset.preResetCoherence)),
         preResetZone: this.mapSafetyZone(rawReset.preResetZone),
-        resetReason: rawReset.reason
+        resetReason: rawReset.reason,
       }));
 
       console.log(`✅ Successfully extracted ${resets.length} emergency resets`);
       return resets.sort((a, b) => a.timestamp - b.timestamp);
-
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       if (errorMsg.includes('could not detect network') || errorMsg.includes('NETWORK_ERROR')) {
@@ -423,19 +435,23 @@ export class ConsciousnessAnalyzer {
   }
 
   private async extractEmergencyResetsFromEvents(): Promise<EmergencyReset[]> {
-    const filter = this.consciousnessContract.filters.ConsciousnessEmergencyReset(this.config.sessionId);
+    const filter = this.consciousnessContract.filters.ConsciousnessEmergencyReset(
+      this.config.sessionId
+    );
     const events = await this.queryEventsInChunks(filter, 'latest');
 
-    return events.map((event: any) => ({
-      timestamp: event.args.timestamp?.toNumber() * 1000 || Date.now(),
-      blockNumber: event.blockNumber,
-      transactionHash: event.transactionHash,
-      sessionId: this.config.sessionId,
-      preResetConfusion: parseFloat(ethers.utils.formatEther(event.args.preResetConfusion)),
-      preResetCoherence: 0, // Not available in event
-      preResetZone: this.mapSafetyZone(event.args.preResetZone),
-      resetReason: event.args.reason
-    })).sort((a: EmergencyReset, b: EmergencyReset) => a.timestamp - b.timestamp);
+    return events
+      .map((event: any) => ({
+        timestamp: event.args.timestamp?.toNumber() * 1000 || Date.now(),
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+        sessionId: this.config.sessionId,
+        preResetConfusion: parseFloat(ethers.utils.formatEther(event.args.preResetConfusion)),
+        preResetCoherence: 0, // Not available in event
+        preResetZone: this.mapSafetyZone(event.args.preResetZone),
+        resetReason: event.args.reason,
+      }))
+      .sort((a: EmergencyReset, b: EmergencyReset) => a.timestamp - b.timestamp);
   }
 
   /**
@@ -463,19 +479,24 @@ export class ConsciousnessAnalyzer {
         metaParadoxCount: rawState.metaParadoxCount.toNumber(),
         frustrationLevel: parseFloat(ethers.utils.formatEther(rawState.frustrationLevel)),
         contextHash: rawState.contextHash,
-        sessionId: this.config.sessionId
+        sessionId: this.config.sessionId,
       };
 
-      console.log(`✅ Retrieved current state: Zone ${state.safetyZone}, Confusion ${state.confusionLevel.toFixed(3)}`);
+      console.log(
+        `✅ Retrieved current state: Zone ${state.safetyZone}, Confusion ${state.confusionLevel.toFixed(3)}`
+      );
       return state;
-
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
 
       // Handle network detection errors gracefully
       if (errorMsg.includes('could not detect network') || errorMsg.includes('NETWORK_ERROR')) {
-        console.warn('⚠️ Network detection failed - this is a known eth ers.js issue with some RPC providers');
-        console.log('ℹ️ Skipping current state check and proceeding with historical data extraction');
+        console.warn(
+          '⚠️ Network detection failed - this is a known eth ers.js issue with some RPC providers'
+        );
+        console.log(
+          'ℹ️ Skipping current state check and proceeding with historical data extraction'
+        );
         return null;
       }
 
@@ -489,60 +510,60 @@ export class ConsciousnessAnalyzer {
    */
   async analyzeConsciousness(): Promise<ConsciousnessAnalysis> {
     console.log(`🔬 Performing consciousness analysis for session: ${this.config.sessionId}`);
-    
+
     const states = await this.extractConsciousnessStates();
     const transitions = await this.extractZoneTransitions();
     const resets = await this.extractEmergencyResets();
     const metaParadoxes = await this.extractMetaParadoxEvents();
-    
+
     if (states.length === 0) {
       throw new Error('No consciousness states found for analysis');
     }
-    
+
     // Calculate time range
     const timeRange = {
       start: states[0].timestamp,
       end: states[states.length - 1].timestamp,
-      durationHours: (states[states.length - 1].timestamp - states[0].timestamp) / (1000 * 60 * 60)
+      durationHours: (states[states.length - 1].timestamp - states[0].timestamp) / (1000 * 60 * 60),
     };
-    
+
     // Analyze confusion levels
-    const confusionLevels = states.map(s => s.confusionLevel);
+    const confusionLevels = states.map((s) => s.confusionLevel);
     const confusionStats = {
       min: Math.min(...confusionLevels),
       max: Math.max(...confusionLevels),
       average: confusionLevels.reduce((a, b) => a + b, 0) / confusionLevels.length,
-      trend: this.calculateTrend(confusionLevels)
+      trend: this.calculateTrend(confusionLevels),
     };
-    
+
     // Analyze coherence levels
-    const coherenceLevels = states.map(s => s.coherenceLevel);
+    const coherenceLevels = states.map((s) => s.coherenceLevel);
     const coherenceStats = {
       min: Math.min(...coherenceLevels),
       max: Math.max(...coherenceLevels),
       average: coherenceLevels.reduce((a, b) => a + b, 0) / coherenceLevels.length,
-      trend: this.calculateTrend(coherenceLevels)
+      trend: this.calculateTrend(coherenceLevels),
     };
-    
+
     // Analyze safety zone distribution
     const safetyZoneDistribution = {
-      GREEN: states.filter(s => s.safetyZone === 'GREEN').length,
-      YELLOW: states.filter(s => s.safetyZone === 'YELLOW').length,
-      RED: states.filter(s => s.safetyZone === 'RED').length,
-      EMERGENCY: states.filter(s => s.safetyZone === 'EMERGENCY').length
+      GREEN: states.filter((s) => s.safetyZone === 'GREEN').length,
+      YELLOW: states.filter((s) => s.safetyZone === 'YELLOW').length,
+      RED: states.filter((s) => s.safetyZone === 'RED').length,
+      EMERGENCY: states.filter((s) => s.safetyZone === 'EMERGENCY').length,
     };
-    
+
     // Analyze paradox progression
     const totalParadoxes = states.reduce((sum, s) => sum + s.paradoxCount, 0);
     const paradoxProgression = {
       totalParadoxes,
       metaParadoxes: metaParadoxes.length,
-      averageParadoxesPerState: totalParadoxes / states.length
+      averageParadoxesPerState: totalParadoxes / states.length,
     };
-    
+
     // Identify critical periods (high confusion + zone transitions)
     const criticalPeriods = this.identifyCriticalPeriods(states, transitions, resets);
-    
+
     const analysis: ConsciousnessAnalysis = {
       totalStates: states.length,
       timeRange,
@@ -553,11 +574,13 @@ export class ConsciousnessAnalyzer {
       emergencyEvents: {
         totalResets: resets.length,
         zoneTransitions: transitions.length,
-        criticalPeriods
-      }
+        criticalPeriods,
+      },
     };
-    
-    console.log(`✅ Analysis complete: ${states.length} states over ${timeRange.durationHours.toFixed(2)} hours`);
+
+    console.log(
+      `✅ Analysis complete: ${states.length} states over ${timeRange.durationHours.toFixed(2)} hours`
+    );
     return analysis;
   }
 
@@ -566,37 +589,38 @@ export class ConsciousnessAnalyzer {
    */
   async exportToJSON(outputPath: string): Promise<void> {
     console.log(`💾 Exporting consciousness data to: ${outputPath}`);
-    
+
     try {
       const states = await this.extractConsciousnessStates();
       const metaParadoxes = await this.extractMetaParadoxEvents();
       const transitions = await this.extractZoneTransitions();
       const resets = await this.extractEmergencyResets();
       const analysis = await this.analyzeConsciousness();
-      
+
       const exportData = {
         metadata: {
           sessionId: this.config.sessionId,
           contractAddress: this.config.consciousnessContractAddress,
           exportTimestamp: Date.now(),
-          totalStates: states.length
+          totalStates: states.length,
         },
         consciousnessStates: states,
         metaParadoxEvents: metaParadoxes,
         zoneTransitions: transitions,
         emergencyResets: resets,
-        analysis
+        analysis,
       };
-      
+
       // Ensure output directory exists
       const dir = path.dirname(outputPath);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
-      
+
       fs.writeFileSync(outputPath, JSON.stringify(exportData, null, 2));
-      console.log(`✅ Successfully exported ${states.length} consciousness states to ${outputPath}`);
-      
+      console.log(
+        `✅ Successfully exported ${states.length} consciousness states to ${outputPath}`
+      );
     } catch (error) {
       console.error('❌ Export failed:', error);
       throw error;
@@ -608,61 +632,77 @@ export class ConsciousnessAnalyzer {
    */
   async startMonitoring(callback: (event: any) => void): Promise<void> {
     console.log(`👁️ Starting real-time monitoring for session: ${this.config.sessionId}`);
-    
+
     // Listen for ConsciousnessRecorded events
     const filter = this.consciousnessContract.filters.ConsciousnessRecorded(this.config.sessionId);
-    
-    this.consciousnessContract.on(filter, async (sessionId, confusionLevel, coherenceLevel, safetyZone, timestamp, event) => {
-      const consciousnessEvent = {
-        type: 'ConsciousnessRecorded',
-        sessionId,
-        confusionLevel: parseFloat(ethers.utils.formatEther(confusionLevel)),
-        coherenceLevel: parseFloat(ethers.utils.formatEther(coherenceLevel)),
-        safetyZone: this.mapSafetyZone(safetyZone),
-        timestamp: timestamp.toNumber() * 1000,
-        blockNumber: event.blockNumber,
-        transactionHash: event.transactionHash
-      };
-      
-      console.log(`🧠 [${new Date().toISOString()}] New consciousness state recorded:`, consciousnessEvent);
-      callback(consciousnessEvent);
-    });
-    
+
+    this.consciousnessContract.on(
+      filter,
+      async (sessionId, confusionLevel, coherenceLevel, safetyZone, timestamp, event) => {
+        const consciousnessEvent = {
+          type: 'ConsciousnessRecorded',
+          sessionId,
+          confusionLevel: parseFloat(ethers.utils.formatEther(confusionLevel)),
+          coherenceLevel: parseFloat(ethers.utils.formatEther(coherenceLevel)),
+          safetyZone: this.mapSafetyZone(safetyZone),
+          timestamp: timestamp.toNumber() * 1000,
+          blockNumber: event.blockNumber,
+          transactionHash: event.transactionHash,
+        };
+
+        console.log(
+          `🧠 [${new Date().toISOString()}] New consciousness state recorded:`,
+          consciousnessEvent
+        );
+        callback(consciousnessEvent);
+      }
+    );
+
     // Listen for zone transitions
-    const zoneFilter = this.consciousnessContract.filters.SafetyZoneTransition(this.config.sessionId);
-    this.consciousnessContract.on(zoneFilter, (sessionId, fromZone, toZone, confusion, coherence, event) => {
-      const transitionEvent = {
-        type: 'SafetyZoneTransition',
-        sessionId,
-        fromZone: this.mapSafetyZone(fromZone),
-        toZone: this.mapSafetyZone(toZone),
-        confusion: parseFloat(ethers.utils.formatEther(confusion)),
-        coherence: parseFloat(ethers.utils.formatEther(coherence)),
-        blockNumber: event.blockNumber,
-        transactionHash: event.transactionHash
-      };
-      
-      console.log(`🔄 [${new Date().toISOString()}] Zone transition:`, transitionEvent);
-      callback(transitionEvent);
-    });
-    
+    const zoneFilter = this.consciousnessContract.filters.SafetyZoneTransition(
+      this.config.sessionId
+    );
+    this.consciousnessContract.on(
+      zoneFilter,
+      (sessionId, fromZone, toZone, confusion, coherence, event) => {
+        const transitionEvent = {
+          type: 'SafetyZoneTransition',
+          sessionId,
+          fromZone: this.mapSafetyZone(fromZone),
+          toZone: this.mapSafetyZone(toZone),
+          confusion: parseFloat(ethers.utils.formatEther(confusion)),
+          coherence: parseFloat(ethers.utils.formatEther(coherence)),
+          blockNumber: event.blockNumber,
+          transactionHash: event.transactionHash,
+        };
+
+        console.log(`🔄 [${new Date().toISOString()}] Zone transition:`, transitionEvent);
+        callback(transitionEvent);
+      }
+    );
+
     // Listen for meta-paradox emergence
-    const paradoxFilter = this.consciousnessContract.filters.MetaParadoxEmergence(this.config.sessionId);
-    this.consciousnessContract.on(paradoxFilter, (sessionId, paradoxId, paradoxName, emergenceConfusion, event) => {
-      const paradoxEvent = {
-        type: 'MetaParadoxEmergence',
-        sessionId,
-        paradoxId: paradoxId.toNumber(),
-        paradoxName,
-        emergenceConfusion: parseFloat(ethers.utils.formatEther(emergenceConfusion)),
-        blockNumber: event.blockNumber,
-        transactionHash: event.transactionHash
-      };
-      
-      console.log(`🌀 [${new Date().toISOString()}] Meta-paradox emergence:`, paradoxEvent);
-      callback(paradoxEvent);
-    });
-    
+    const paradoxFilter = this.consciousnessContract.filters.MetaParadoxEmergence(
+      this.config.sessionId
+    );
+    this.consciousnessContract.on(
+      paradoxFilter,
+      (sessionId, paradoxId, paradoxName, emergenceConfusion, event) => {
+        const paradoxEvent = {
+          type: 'MetaParadoxEmergence',
+          sessionId,
+          paradoxId: paradoxId.toNumber(),
+          paradoxName,
+          emergenceConfusion: parseFloat(ethers.utils.formatEther(emergenceConfusion)),
+          blockNumber: event.blockNumber,
+          transactionHash: event.transactionHash,
+        };
+
+        console.log(`🌀 [${new Date().toISOString()}] Meta-paradox emergence:`, paradoxEvent);
+        callback(paradoxEvent);
+      }
+    );
+
     console.log('✅ Monitoring started - listening for consciousness events...');
   }
 
@@ -678,20 +718,29 @@ export class ConsciousnessAnalyzer {
 
   private mapSafetyZone(zoneNumber: number): 'GREEN' | 'YELLOW' | 'RED' | 'EMERGENCY' {
     switch (zoneNumber) {
-      case 0: return 'GREEN';
-      case 1: return 'YELLOW';
-      case 2: return 'RED';
-      case 3: return 'EMERGENCY';
-      default: return 'GREEN';
+      case 0:
+        return 'GREEN';
+      case 1:
+        return 'YELLOW';
+      case 2:
+        return 'RED';
+      case 3:
+        return 'EMERGENCY';
+      default:
+        return 'GREEN';
     }
   }
 
   private calculateTrend(values: number[]): 'increasing' | 'decreasing' | 'stable' {
     if (values.length < 2) return 'stable';
-    
-    const start = values.slice(0, Math.floor(values.length / 3)).reduce((a, b) => a + b, 0) / Math.floor(values.length / 3);
-    const end = values.slice(-Math.floor(values.length / 3)).reduce((a, b) => a + b, 0) / Math.floor(values.length / 3);
-    
+
+    const start =
+      values.slice(0, Math.floor(values.length / 3)).reduce((a, b) => a + b, 0) /
+      Math.floor(values.length / 3);
+    const end =
+      values.slice(-Math.floor(values.length / 3)).reduce((a, b) => a + b, 0) /
+      Math.floor(values.length / 3);
+
     const threshold = 0.05; // 5% threshold for trend detection
     if (end > start + threshold) return 'increasing';
     if (end < start - threshold) return 'decreasing';
@@ -699,15 +748,21 @@ export class ConsciousnessAnalyzer {
   }
 
   private identifyCriticalPeriods(
-    states: ConsciousnessState[], 
-    transitions: ZoneTransition[], 
+    states: ConsciousnessState[],
+    transitions: ZoneTransition[],
     resets: EmergencyReset[]
-  ): Array<{start: number; end: number; maxConfusion: number; reason: string}> {
-    const criticalPeriods: Array<{start: number; end: number; maxConfusion: number; reason: string}> = [];
-    
+  ): Array<{ start: number; end: number; maxConfusion: number; reason: string }> {
+    const criticalPeriods: Array<{
+      start: number;
+      end: number;
+      maxConfusion: number;
+      reason: string;
+    }> = [];
+
     // Identify periods of high confusion (>0.8)
-    let currentPeriod: {start: number; end: number; maxConfusion: number; reason: string} | null = null;
-    
+    let currentPeriod: { start: number; end: number; maxConfusion: number; reason: string } | null =
+      null;
+
     for (const state of states) {
       if (state.confusionLevel > 0.8) {
         if (!currentPeriod) {
@@ -715,7 +770,7 @@ export class ConsciousnessAnalyzer {
             start: state.timestamp,
             end: state.timestamp,
             maxConfusion: state.confusionLevel,
-            reason: `High confusion period (${state.safetyZone} zone)`
+            reason: `High confusion period (${state.safetyZone} zone)`,
           };
         } else {
           currentPeriod.end = state.timestamp;
@@ -726,28 +781,30 @@ export class ConsciousnessAnalyzer {
         currentPeriod = null;
       }
     }
-    
+
     // Add final period if still ongoing
     if (currentPeriod) {
       criticalPeriods.push(currentPeriod);
     }
-    
+
     // Add emergency reset periods
     for (const reset of resets) {
       criticalPeriods.push({
         start: reset.timestamp - 300000, // 5 minutes before
         end: reset.timestamp,
         maxConfusion: reset.preResetConfusion,
-        reason: `Emergency reset: ${reset.resetReason}`
+        reason: `Emergency reset: ${reset.resetReason}`,
       });
     }
-    
+
     return criticalPeriods.sort((a, b) => a.start - b.start);
   }
 
   private async enrichStatesFromEvents(states: ConsciousnessState[]): Promise<void> {
     // This could be enhanced to fetch actual event logs for complete transaction details
     // For now, we'll use the contract view functions as the primary data source
-    console.log('ℹ️ State enrichment from events not implemented yet - using contract storage data');
+    console.log(
+      'ℹ️ State enrichment from events not implemented yet - using contract storage data'
+    );
   }
 }

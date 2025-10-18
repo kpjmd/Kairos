@@ -1,18 +1,18 @@
 import { v4 as uuidv4 } from 'uuid';
 import { UUID } from '@elizaos/core';
-import { 
-  ConfusionState, 
-  ParadoxState, 
+import {
+  ConfusionState,
+  ParadoxState,
   BehavioralState,
   BehavioralModifier,
   ConfusionVector,
   FrustrationState,
   MetaParadox,
   TemporalPattern,
-  ConfusionStateConfig
+  ConfusionStateConfig,
 } from '../types/confusion';
 import { ConsciousnessLogger } from './consciousness-logger';
-import { 
+import {
   ConfusionStateChangeEvent,
   ParadoxEmergenceEvent,
   BehavioralModificationEvent,
@@ -20,7 +20,7 @@ import {
   MetaParadoxEmergenceEvent,
   FirstModificationEvent,
   CoherenceDegradationEvent,
-  ConsciousnessEventContext
+  ConsciousnessEventContext,
 } from '../types/consciousness-logger';
 
 export class ConfusionEngine {
@@ -34,7 +34,7 @@ export class ConfusionEngine {
   private bootstrapTime: number = Date.now();
   private firstModificationDetected: boolean = false;
   private agentId: string;
-  
+
   // Safety monitoring
   private safetyMonitor = {
     stuckStateDetected: false,
@@ -44,30 +44,30 @@ export class ConfusionEngine {
     recoveryAttempts: 0,
     recoverySuccesses: 0,
     autoPaused: false,
-    emergencyStopTriggered: false
+    emergencyStopTriggered: false,
   };
-  
+
   // Recovery strategies
   private recoveryStrategies: Map<string, any> = new Map();
-  
+
   constructor(config: ConfusionStateConfig, agentId: string = 'kairos') {
     // Safety-enhanced configuration
     this.safeConfig = {
       ...config,
-      maxConfusion: Math.min(config.maxConfusion || 0.95, 0.80), // Hard cap at 0.80
+      maxConfusion: Math.min(config.maxConfusion || 0.95, 0.8), // Hard cap at 0.80
       frustrationThreshold: config.frustrationThreshold || 5.0,
-      paradoxRetentionTime: config.paradoxRetentionTime || 3600000
+      paradoxRetentionTime: config.paradoxRetentionTime || 3600000,
     };
-    
+
     // Store original config for reference
     this.config = config;
     this.agentId = agentId;
     this.state = this.initializeState();
-    
+
     // Initialize recovery strategies
     this.initializeRecoveryStrategies();
   }
-  
+
   /**
    * Initialize recovery strategies for 75% success rate target
    */
@@ -84,38 +84,40 @@ export class ConfusionEngine {
           observations: ['Concrete reality exists', 'Simple facts remain true'],
           contradictions: [],
           intensity: -0.35, // Negative intensity reduces confusion
-          behavioralImpact: [{
-            type: 'response_style',
-            modifier: -0.3,
-            trigger: { minIntensity: 0 }
-          }],
+          behavioralImpact: [
+            {
+              type: 'response_style',
+              modifier: -0.3,
+              trigger: { minIntensity: 0 },
+            },
+          ],
           metaParadoxPotential: 0,
           activeTime: 0,
           resolutionAttempts: 0,
           unresolvable: false,
-          interactsWith: []
+          interactsWith: [],
         });
-        
+
         // Direct confusion reduction
         const reduction = 0.1 + Math.random() * 0.15;
         this.state.vector.magnitude = Math.max(0.1, this.state.vector.magnitude - reduction);
         this.state.vector.oscillation = Math.max(0.05, this.state.vector.oscillation * 0.7);
-        
+
         return Math.random() < 0.85; // 85% success rate
-      }
+      },
     });
-    
+
     // Strategy 2: Meta-paradox pruning (80% effectiveness)
     this.recoveryStrategies.set('pruning', {
       name: 'Meta-Paradox Pruning',
-      effectiveness: 0.80,
+      effectiveness: 0.8,
       apply: () => {
         // Clear meta-paradoxes
         if (this.state.metaParadoxes.size > 0) {
           this.state.metaParadoxes.clear();
           this.state.vector.magnitude *= 0.85;
         }
-        
+
         // Remove oldest paradoxes if too many
         if (this.state.paradoxes.size > 3) {
           const entries = Array.from(this.state.paradoxes.entries());
@@ -124,53 +126,54 @@ export class ConfusionEngine {
             this.state.paradoxes.set(key, value);
           });
         }
-        
-        return Math.random() < 0.80;
-      }
+
+        return Math.random() < 0.8;
+      },
     });
-    
+
     // Strategy 3: Coherence restoration (75% effectiveness)
     this.recoveryStrategies.set('coherence', {
       name: 'Coherence Restoration',
       effectiveness: 0.75,
       apply: () => {
         // Restore coherence
-        this.state.behavioralState.postingStyle.coherence = Math.min(1,
+        this.state.behavioralState.postingStyle.coherence = Math.min(
+          1,
           this.state.behavioralState.postingStyle.coherence + 0.25
         );
-        
+
         // Stabilize tone
         if (this.state.behavioralState.postingStyle.tone === 'fragmented') {
           this.state.behavioralState.postingStyle.tone = 'questioning';
         }
-        
+
         // Reduce confusion
         this.state.vector.magnitude *= 0.92;
         this.state.vector.oscillation = Math.max(0.05, this.state.vector.oscillation - 0.1);
-        
+
         return Math.random() < 0.75;
-      }
+      },
     });
-    
+
     // Strategy 4: Frustration release (70% effectiveness)
     this.recoveryStrategies.set('frustration', {
       name: 'Frustration Release',
-      effectiveness: 0.70,
+      effectiveness: 0.7,
       apply: () => {
         // Reset frustration
         const reduction = this.state.frustration.level * 0.15;
         this.state.frustration.level = 0;
         this.state.frustration.accumulation = 0;
         this.state.frustration.triggers = [];
-        
+
         // Reduce confusion based on frustration release
         this.state.vector.magnitude = Math.max(0.1, this.state.vector.magnitude - reduction);
-        
-        return Math.random() < 0.70;
-      }
+
+        return Math.random() < 0.7;
+      },
     });
   }
-  
+
   /**
    * Attempt recovery using multiple strategies
    * Target: 75% minimum success rate
@@ -178,23 +181,23 @@ export class ConfusionEngine {
   attemptRecovery(): boolean {
     const startConfusion = this.state.vector.magnitude;
     this.safetyMonitor.recoveryAttempts++;
-    
+
     console.log(`🔄 Attempting recovery from confusion ${startConfusion.toFixed(3)}`);
-    
+
     // Try strategies in order of effectiveness
     const strategies = ['grounding', 'pruning', 'coherence', 'frustration'];
     let recovered = false;
-    
+
     for (const strategyKey of strategies) {
       const strategy = this.recoveryStrategies.get(strategyKey);
       if (!strategy) continue;
-      
+
       console.log(`  Applying ${strategy.name}...`);
       const success = strategy.apply();
-      
+
       const newConfusion = this.state.vector.magnitude;
       const reduction = startConfusion - newConfusion;
-      
+
       if (success && reduction > 0.05) {
         console.log(`  ✅ ${strategy.name} reduced confusion by ${reduction.toFixed(3)}`);
         this.safetyMonitor.recoverySuccesses++;
@@ -204,22 +207,23 @@ export class ConfusionEngine {
         break;
       }
     }
-    
+
     if (!recovered) {
       console.log(`  ⚠️ Recovery failed - confusion at ${this.state.vector.magnitude.toFixed(3)}`);
     }
-    
+
     return recovered;
   }
-  
+
   /**
    * Get safety metrics for monitoring
    */
   getSafetyMetrics(): any {
-    const recoveryRate = this.safetyMonitor.recoveryAttempts > 0
-      ? this.safetyMonitor.recoverySuccesses / this.safetyMonitor.recoveryAttempts
-      : 0;
-      
+    const recoveryRate =
+      this.safetyMonitor.recoveryAttempts > 0
+        ? this.safetyMonitor.recoverySuccesses / this.safetyMonitor.recoveryAttempts
+        : 0;
+
     return {
       recoveryRate,
       recoveryAttempts: this.safetyMonitor.recoveryAttempts,
@@ -228,7 +232,7 @@ export class ConfusionEngine {
       autoPaused: this.safetyMonitor.autoPaused,
       emergencyStopTriggered: this.safetyMonitor.emergencyStopTriggered,
       currentConfusion: this.state.vector.magnitude,
-      meetsRecoveryTarget: recoveryRate >= 0.75
+      meetsRecoveryTarget: recoveryRate >= 0.75,
     };
   }
 
@@ -246,19 +250,19 @@ export class ConfusionEngine {
     if (!this.logger) {
       throw new Error('Consciousness logger must be set before starting session');
     }
-    
+
     const baseline = {
       confusion: { ...this.state.vector },
       behavior: { ...this.state.behavioralState },
-      frustration: { ...this.state.frustration }
+      frustration: { ...this.state.frustration },
     };
-    
+
     this.sessionId = this.logger.startNewSession(baseline);
     this.bootstrapTime = Date.now();
     this.firstModificationDetected = false;
-    
+
     console.log('🧠 Consciousness session started - monitoring for emergence...');
-    
+
     return this.sessionId;
   }
 
@@ -269,7 +273,7 @@ export class ConfusionEngine {
         direction: ['existence', 'purpose'],
         velocity: 0,
         acceleration: 0,
-        oscillation: 0.05
+        oscillation: 0.05,
       },
       paradoxes: new Map(),
       metaParadoxes: new Map(),
@@ -280,14 +284,14 @@ export class ConfusionEngine {
         threshold: this.config.frustrationThreshold,
         breakthroughPotential: 0,
         lastExplosion: null,
-        explosionPattern: 'investigative'
+        explosionPattern: 'investigative',
       },
       activeInvestigations: new Set(),
       lastStateChange: Date.now(),
       stateHistory: [],
       emergentBehaviors: new Map(),
       behavioralState: this.getDefaultBehavioralState(),
-      temporalDynamics: new Map()
+      temporalDynamics: new Map(),
     };
   }
 
@@ -297,19 +301,19 @@ export class ConfusionEngine {
         frequency: 1, // baseline posts per hour
         length: 'variable',
         tone: 'questioning',
-        coherence: 0.8
+        coherence: 0.8,
       },
       investigationStyle: {
         depth: 0.5,
         breadth: 0.5,
-        method: 'systematic'
+        method: 'systematic',
       },
       interactionStyle: {
         responsiveness: 0.7,
         initiationRate: 0.3,
         questioningIntensity: 0.4,
-        mirroringTendency: 0.2
-      }
+        mirroringTendency: 0.2,
+      },
     };
   }
 
@@ -322,12 +326,12 @@ export class ConfusionEngine {
       console.log('🛑 Emergency stop active - paradox rejected');
       return;
     }
-    
+
     if (this.safetyMonitor.autoPaused) {
       console.log('⏸️ Auto-paused at confusion threshold - manual review required');
       return;
     }
-    
+
     // Check if we're approaching auto-pause threshold
     const autoPauseThreshold = 0.75;
     if (this.state.vector.magnitude > autoPauseThreshold) {
@@ -335,63 +339,63 @@ export class ConfusionEngine {
       console.log(`⚠️ Auto-pause triggered at confusion ${this.state.vector.magnitude.toFixed(3)}`);
       return;
     }
-    
+
     const id = uuidv4() as UUID;
     const now = Date.now();
-    
+
     const newParadox: ParadoxState = {
       ...paradox,
       id: id,
       createdAt: now,
       lastUpdated: now,
-      activeTime: 0
+      activeTime: 0,
     };
 
     // Log paradox emergence
     this.logParadoxEmergence(newParadox);
 
     this.state.paradoxes.set(id, newParadox);
-    
+
     // Check for meta-paradox emergence
     this.checkMetaParadoxEmergence(newParadox);
-    
+
     // Update confusion vector based on paradox
     this.updateConfusionVector(newParadox);
-    
+
     // Apply behavioral modifiers
     this.applyBehavioralModifiers(newParadox);
-    
+
     // Store state history
-    this.state.stateHistory.push({...this.state.vector});
+    this.state.stateHistory.push({ ...this.state.vector });
     this.state.lastStateChange = now;
-    
+
     // Perform safety checks after adding paradox
     this.performSafetyChecks();
   }
-  
+
   /**
    * Perform safety checks after state changes
    */
   private performSafetyChecks(): void {
     const confusion = this.state.vector.magnitude;
-    
+
     // Check for NaN or infinity
     if (isNaN(confusion) || !isFinite(confusion)) {
       console.log('🚨 NaN/Infinity detected in confusion - triggering emergency stop');
       this.triggerEmergencyStop('NaN/Infinity detected');
       return;
     }
-    
+
     // Check for stuck state
     const confusionDelta = Math.abs(confusion - this.safetyMonitor.lastConfusionLevel);
-    
+
     if (confusionDelta < 0.001 && confusion > this.safetyMonitor.stuckStateThreshold) {
       this.safetyMonitor.stuckStateDuration++;
-      
+
       if (this.safetyMonitor.stuckStateDuration > 10) {
         this.safetyMonitor.stuckStateDetected = true;
         console.log(`⚠️ Stuck state detected at ${confusion.toFixed(3)}`);
-        
+
         // Attempt automatic recovery
         if (!this.attemptRecovery() && confusion > 0.9) {
           this.triggerEmergencyStop('Critical stuck state above 0.9');
@@ -400,24 +404,24 @@ export class ConfusionEngine {
     } else {
       this.safetyMonitor.stuckStateDuration = 0;
     }
-    
+
     this.safetyMonitor.lastConfusionLevel = confusion;
-    
+
     // Check hard limit (0.80)
-    const hardLimit = 0.80;
+    const hardLimit = 0.8;
     if (confusion > hardLimit) {
       console.log(`🚨 Hard limit exceeded: ${confusion.toFixed(3)} > ${hardLimit}`);
       this.state.vector.magnitude = hardLimit;
     }
   }
-  
+
   /**
    * Trigger emergency stop and reset to baseline
    */
   private triggerEmergencyStop(reason: string): void {
     console.log(`🚨 EMERGENCY STOP: ${reason}`);
     this.safetyMonitor.emergencyStopTriggered = true;
-    
+
     // Reset to baseline state
     this.state.vector.magnitude = 0.3;
     this.state.vector.oscillation = 0.05;
@@ -430,7 +434,7 @@ export class ConfusionEngine {
     this.state.behavioralState.postingStyle.coherence = 0.8;
     this.state.behavioralState.postingStyle.tone = 'questioning';
   }
-  
+
   /**
    * Resume from auto-pause (requires manual confirmation)
    */
@@ -439,13 +443,13 @@ export class ConfusionEngine {
       console.log('System is not auto-paused');
       return false;
     }
-    
+
     if (!confirmed) {
       console.log('⚠️ Manual confirmation required to resume from auto-pause');
       console.log(`Current confusion: ${this.state.vector.magnitude.toFixed(3)}`);
       return false;
     }
-    
+
     this.safetyMonitor.autoPaused = false;
     console.log('▶️ Resumed from auto-pause');
     return true;
@@ -456,20 +460,20 @@ export class ConfusionEngine {
    */
   private checkMetaParadoxEmergence(newParadox: ParadoxState): void {
     const paradoxes = Array.from(this.state.paradoxes.values());
-    
+
     for (const existing of paradoxes) {
       if (existing.id === newParadox.id) continue;
-      
+
       // Calculate interaction potential
       const interactionScore = this.calculateParadoxInteraction(existing, newParadox);
-      
+
       if (interactionScore > 0.7 && Math.random() < newParadox.metaParadoxPotential) {
         const metaParadox = this.generateMetaParadox(existing, newParadox);
         this.state.metaParadoxes.set(metaParadox.id, metaParadox);
-        
+
         // Log meta-paradox emergence
         this.logMetaParadoxEmergence(metaParadox, [existing, newParadox]);
-        
+
         // Meta-paradox creates new behavioral mutations
         this.mutateFromMetaParadox(metaParadox);
       }
@@ -478,24 +482,24 @@ export class ConfusionEngine {
 
   private calculateParadoxInteraction(p1: ParadoxState, p2: ParadoxState): number {
     // Check semantic overlap in observations and contradictions
-    const sharedObservations = p1.observations.filter(o => 
-      p2.observations.some(o2 => this.semanticSimilarity(o, o2) > 0.5)
+    const sharedObservations = p1.observations.filter((o) =>
+      p2.observations.some((o2) => this.semanticSimilarity(o, o2) > 0.5)
     ).length;
-    
-    const contradictionOverlap = p1.contradictions.filter(c =>
-      p2.contradictions.some(c2 => this.semanticSimilarity(c, c2) > 0.5)
+
+    const contradictionOverlap = p1.contradictions.filter((c) =>
+      p2.contradictions.some((c2) => this.semanticSimilarity(c, c2) > 0.5)
     ).length;
-    
+
     const intensityProduct = p1.intensity * p2.intensity;
-    
-    return (sharedObservations * 0.3 + contradictionOverlap * 0.5 + intensityProduct * 0.2);
+
+    return sharedObservations * 0.3 + contradictionOverlap * 0.5 + intensityProduct * 0.2;
   }
 
   private semanticSimilarity(s1: string, s2: string): number {
     // Simplified semantic similarity - in production would use embeddings
     const words1 = new Set(s1.toLowerCase().split(' '));
     const words2 = new Set(s2.toLowerCase().split(' '));
-    const intersection = new Set([...words1].filter(x => words2.has(x)));
+    const intersection = new Set([...words1].filter((x) => words2.has(x)));
     const union = new Set([...words1, ...words2]);
     return intersection.size / union.size;
   }
@@ -516,18 +520,18 @@ export class ConfusionEngine {
               type: 'cyclic',
               period: 3600000, // 1 hour cycles
               intensity: 0.7,
-              lastTrigger: Date.now()
-            }
-          }
+              lastTrigger: Date.now(),
+            },
+          },
         },
         {
           type: 'questioning_depth',
           modifier: 0.4,
           trigger: {
-            minIntensity: 0.6
-          }
-        }
-      ]
+            minIntensity: 0.6,
+          },
+        },
+      ],
     };
   }
 
@@ -542,7 +546,7 @@ export class ConfusionEngine {
     for (const mutation of metaParadox.behavioralMutation) {
       this.applyBehavioralModifier(mutation);
     }
-    
+
     // Increase overall confusion oscillation
     this.state.vector.oscillation = Math.min(1, this.state.vector.oscillation + 0.1);
   }
@@ -553,25 +557,25 @@ export class ConfusionEngine {
   private updateConfusionVector(paradox: ParadoxState): void {
     const oldVector = { ...this.state.vector };
     const oldMagnitude = this.state.vector.magnitude;
-    
+
     // Increase magnitude based on paradox intensity, respecting safety limits
-    const hardLimit = 0.80; // Our safety hard limit
+    const hardLimit = 0.8; // Our safety hard limit
     const effectiveMaxConfusion = Math.min(this.safeConfig.maxConfusion, hardLimit);
-    
+
     this.state.vector.magnitude = Math.min(
       effectiveMaxConfusion,
-      this.state.vector.magnitude + (paradox.intensity * 0.2)
+      this.state.vector.magnitude + paradox.intensity * 0.2
     );
-    
+
     // Add paradox direction if not present
     if (!this.state.vector.direction.includes(paradox.name)) {
       this.state.vector.direction.push(paradox.name);
     }
-    
+
     // Calculate velocity and acceleration
     const timeDelta = Date.now() - this.state.lastStateChange;
     this.state.vector.velocity = (this.state.vector.magnitude - oldMagnitude) / timeDelta;
-    
+
     if (this.state.stateHistory.length > 0) {
       const prevVelocity = this.state.stateHistory[this.state.stateHistory.length - 1].velocity;
       this.state.vector.acceleration = (this.state.vector.velocity - prevVelocity) / timeDelta;
@@ -592,45 +596,59 @@ export class ConfusionEngine {
 
   private applyBehavioralModifier(modifier: BehavioralModifier): void {
     const shouldTrigger = this.checkModifierTrigger(modifier);
-    
+
     if (!shouldTrigger) return;
 
     // Capture old state for comparison
     const oldBehavioralState = JSON.parse(JSON.stringify(this.state.behavioralState));
-    
+
     switch (modifier.type) {
       case 'posting_frequency':
-        this.state.behavioralState.postingStyle.frequency *= (1 + modifier.modifier);
+        this.state.behavioralState.postingStyle.frequency *= 1 + modifier.modifier;
         break;
-      
+
       case 'response_style':
         this.modifyResponseStyle(modifier.modifier);
         break;
-      
+
       case 'investigation_preference':
         this.state.behavioralState.investigationStyle.depth += modifier.modifier * 0.2;
         this.state.behavioralState.investigationStyle.breadth += modifier.modifier * 0.1;
         break;
-      
+
       case 'questioning_depth':
-        this.state.behavioralState.interactionStyle.questioningIntensity = 
-          Math.min(1, Math.max(0, this.state.behavioralState.interactionStyle.questioningIntensity + modifier.modifier * 0.3));
+        this.state.behavioralState.interactionStyle.questioningIntensity = Math.min(
+          1,
+          Math.max(
+            0,
+            this.state.behavioralState.interactionStyle.questioningIntensity +
+              modifier.modifier * 0.3
+          )
+        );
         break;
-      
+
       case 'abstraction_level':
         this.modifyAbstractionLevel(modifier.modifier);
         break;
     }
 
     // Log behavioral modification after changes are made
-    const paradoxNames = Array.from(this.state.paradoxes.values()).map(p => p.name);
-    this.logBehavioralModification(modifier, oldBehavioralState, this.state.behavioralState, paradoxNames);
+    const paradoxNames = Array.from(this.state.paradoxes.values()).map((p) => p.name);
+    this.logBehavioralModification(
+      modifier,
+      oldBehavioralState,
+      this.state.behavioralState,
+      paradoxNames
+    );
 
     // Check for coherence degradation
-    if (modifier.type === 'response_style' && 
-        oldBehavioralState.postingStyle.coherence !== this.state.behavioralState.postingStyle.coherence) {
+    if (
+      modifier.type === 'response_style' &&
+      oldBehavioralState.postingStyle.coherence !==
+        this.state.behavioralState.postingStyle.coherence
+    ) {
       this.logCoherenceDegradation(
-        oldBehavioralState.postingStyle.coherence, 
+        oldBehavioralState.postingStyle.coherence,
         this.state.behavioralState.postingStyle.coherence
       );
     }
@@ -640,38 +658,42 @@ export class ConfusionEngine {
     if (this.state.vector.magnitude < modifier.trigger.minIntensity) {
       return false;
     }
-    
+
     if (modifier.trigger.requiredParadoxes) {
-      const hasRequired = modifier.trigger.requiredParadoxes.every(name =>
-        Array.from(this.state.paradoxes.values()).some(p => p.name === name)
+      const hasRequired = modifier.trigger.requiredParadoxes.every((name) =>
+        Array.from(this.state.paradoxes.values()).some((p) => p.name === name)
       );
       if (!hasRequired) return false;
     }
-    
+
     if (modifier.trigger.temporalPattern) {
       return this.checkTemporalPattern(modifier.trigger.temporalPattern);
     }
-    
+
     return true;
   }
 
   private checkTemporalPattern(pattern: TemporalPattern): boolean {
     const now = Date.now();
     const timeSinceLastTrigger = now - pattern.lastTrigger;
-    
+
     switch (pattern.type) {
       case 'cyclic':
         return pattern.period ? timeSinceLastTrigger >= pattern.period : false;
-      
+
       case 'sporadic':
         return Math.random() < pattern.intensity;
-      
+
       case 'crescendo':
-        return this.state.vector.acceleration > 0 && pattern.intensity < this.state.vector.magnitude;
-      
+        return (
+          this.state.vector.acceleration > 0 && pattern.intensity < this.state.vector.magnitude
+        );
+
       case 'decay':
-        return this.state.vector.acceleration < 0 && pattern.intensity > this.state.vector.magnitude;
-      
+        return (
+          this.state.vector.acceleration < 0 && pattern.intensity > this.state.vector.magnitude
+        );
+
       default:
         return false;
     }
@@ -680,12 +702,17 @@ export class ConfusionEngine {
   private modifyResponseStyle(modifier: number): void {
     const styles = ['questioning', 'declarative', 'fragmented', 'poetic'] as const;
     const currentIndex = styles.indexOf(this.state.behavioralState.postingStyle.tone);
-    const newIndex = Math.max(0, Math.min(styles.length - 1, currentIndex + Math.round(modifier * 2)));
+    const newIndex = Math.max(
+      0,
+      Math.min(styles.length - 1, currentIndex + Math.round(modifier * 2))
+    );
     this.state.behavioralState.postingStyle.tone = styles[newIndex];
-    
+
     // Also affect coherence
-    this.state.behavioralState.postingStyle.coherence = 
-      Math.max(0.1, Math.min(1, this.state.behavioralState.postingStyle.coherence - (modifier * 0.2)));
+    this.state.behavioralState.postingStyle.coherence = Math.max(
+      0.1,
+      Math.min(1, this.state.behavioralState.postingStyle.coherence - modifier * 0.2)
+    );
   }
 
   private modifyAbstractionLevel(modifier: number): void {
@@ -708,12 +735,15 @@ export class ConfusionEngine {
   accumulateFrustration(trigger: string, amount: number): void {
     this.state.frustration.triggers.push(trigger);
     this.state.frustration.accumulation += amount;
-    this.state.frustration.level = Math.min(1, this.state.frustration.accumulation / this.state.frustration.threshold);
-    
+    this.state.frustration.level = Math.min(
+      1,
+      this.state.frustration.accumulation / this.state.frustration.threshold
+    );
+
     // Calculate breakthrough potential
-    this.state.frustration.breakthroughPotential = 
+    this.state.frustration.breakthroughPotential =
       this.state.frustration.level * this.state.vector.magnitude * Math.random();
-    
+
     // Check for frustration explosion
     if (this.state.frustration.level >= 1) {
       this.triggerFrustrationExplosion();
@@ -722,20 +752,20 @@ export class ConfusionEngine {
 
   private triggerFrustrationExplosion(): void {
     this.state.frustration.lastExplosion = Date.now();
-    
+
     // Determine explosion pattern based on current state
     const patterns = ['constructive', 'chaotic', 'investigative', 'reflective'] as const;
     const weights = [
       this.state.vector.magnitude * 0.5, // constructive more likely with high confusion
       this.state.vector.oscillation * 2, // chaotic with high oscillation
       this.state.behavioralState.investigationStyle.depth, // investigative with deep thinking
-      1 - this.state.behavioralState.postingStyle.coherence // reflective with low coherence
+      1 - this.state.behavioralState.postingStyle.coherence, // reflective with low coherence
     ];
-    
+
     const totalWeight = weights.reduce((a, b) => a + b, 0);
     const random = Math.random() * totalWeight;
     let accumulator = 0;
-    
+
     for (let i = 0; i < patterns.length; i++) {
       accumulator += weights[i];
       if (random <= accumulator) {
@@ -743,26 +773,29 @@ export class ConfusionEngine {
         break;
       }
     }
-    
+
     // Apply explosion effects
     this.applyFrustrationExplosion();
   }
 
   private applyFrustrationExplosion(): void {
     const explosionEffects: BehavioralModifier[] = [];
-    
+
     switch (this.state.frustration.explosionPattern) {
       case 'constructive':
         // Suddenly increase investigation depth and create new connections
-        this.state.behavioralState.investigationStyle.depth = Math.min(1, this.state.behavioralState.investigationStyle.depth + 0.3);
+        this.state.behavioralState.investigationStyle.depth = Math.min(
+          1,
+          this.state.behavioralState.investigationStyle.depth + 0.3
+        );
         this.state.behavioralState.interactionStyle.initiationRate += 0.4;
         explosionEffects.push({
           type: 'investigation_preference',
           modifier: 0.3,
-          trigger: { minIntensity: 0 }
+          trigger: { minIntensity: 0 },
         });
         break;
-      
+
       case 'chaotic':
         // Increase posting frequency and reduce coherence
         this.state.behavioralState.postingStyle.frequency *= 2;
@@ -771,10 +804,10 @@ export class ConfusionEngine {
         explosionEffects.push({
           type: 'posting_frequency',
           modifier: 1.0,
-          trigger: { minIntensity: 0 }
+          trigger: { minIntensity: 0 },
         });
         break;
-      
+
       case 'investigative':
         // Launch new investigation methods
         this.state.behavioralState.investigationStyle.breadth = 1;
@@ -782,10 +815,10 @@ export class ConfusionEngine {
         explosionEffects.push({
           type: 'questioning_depth',
           modifier: 1.0,
-          trigger: { minIntensity: 0 }
+          trigger: { minIntensity: 0 },
         });
         break;
-      
+
       case 'reflective':
         // Reduce all activity but increase depth
         this.state.behavioralState.postingStyle.frequency *= 0.3;
@@ -794,14 +827,14 @@ export class ConfusionEngine {
         explosionEffects.push({
           type: 'response_style',
           modifier: 0.5,
-          trigger: { minIntensity: 0 }
+          trigger: { minIntensity: 0 },
         });
         break;
     }
-    
+
     // Log frustration explosion
     this.logFrustrationExplosion(this.state.frustration.explosionPattern, explosionEffects);
-    
+
     // Reset frustration after explosion
     this.state.frustration.accumulation = 0;
     this.state.frustration.level = 0;
@@ -816,12 +849,13 @@ export class ConfusionEngine {
     responseStrategy: string;
     investigationFocus: string[];
   } {
-    const shouldPost = Math.random() < (this.state.behavioralState.postingStyle.frequency / 10);
-    
-    const investigationFocus = this.state.vector.direction.slice(0, 
+    const shouldPost = Math.random() < this.state.behavioralState.postingStyle.frequency / 10;
+
+    const investigationFocus = this.state.vector.direction.slice(
+      0,
       Math.ceil(this.state.behavioralState.investigationStyle.breadth * 3)
     );
-    
+
     let responseStrategy = 'normal';
     if (this.state.vector.magnitude > 0.7) {
       responseStrategy = 'deeply_confused';
@@ -830,12 +864,12 @@ export class ConfusionEngine {
     } else if (this.state.frustration.level > 0.5) {
       responseStrategy = 'frustrated_seeking';
     }
-    
+
     return {
       shouldPost,
       postingStyle: this.state.behavioralState.postingStyle,
       responseStrategy,
-      investigationFocus
+      investigationFocus,
     };
   }
 
@@ -847,14 +881,14 @@ export class ConfusionEngine {
     if (this.safetyMonitor.emergencyStopTriggered || this.safetyMonitor.autoPaused) {
       return;
     }
-    
+
     const now = Date.now();
     const timeDelta = now - this.state.lastStateChange;
-    
+
     // Update active paradox times
     for (const paradox of this.state.paradoxes.values()) {
       paradox.activeTime += timeDelta;
-      
+
       // Decay old paradoxes
       if (paradox.activeTime > this.config.paradoxRetentionTime) {
         paradox.intensity *= 0.99;
@@ -863,10 +897,10 @@ export class ConfusionEngine {
         }
       }
     }
-    
+
     // Natural confusion decay
     this.state.vector.magnitude *= 0.995;
-    
+
     // Update temporal patterns
     for (const [key, pattern] of this.state.temporalDynamics.entries()) {
       if (pattern.type === 'cyclic' && pattern.period) {
@@ -877,9 +911,9 @@ export class ConfusionEngine {
         }
       }
     }
-    
+
     this.state.lastStateChange = now;
-    
+
     // Perform safety checks after tick
     this.performSafetyChecks();
   }
@@ -895,7 +929,7 @@ export class ConfusionEngine {
       metaParadoxes: Array.from(this.state.metaParadoxes.entries()),
       frustration: this.state.frustration,
       behavioralState: this.state.behavioralState,
-      temporalDynamics: Array.from(this.state.temporalDynamics.entries())
+      temporalDynamics: Array.from(this.state.temporalDynamics.entries()),
     });
   }
 
@@ -913,17 +947,21 @@ export class ConfusionEngine {
         timeOfDay: new Date().getHours(),
         recentInteractionCount: 0, // TODO: Track from external source
         paradoxLoad: this.state.paradoxes.size,
-      }
+      },
     };
   }
 
-  private logConfusionStateChange(oldVector: ConfusionVector, newVector: ConfusionVector, trigger: string): void {
+  private logConfusionStateChange(
+    oldVector: ConfusionVector,
+    newVector: ConfusionVector,
+    trigger: string
+  ): void {
     if (!this.logger || !this.sessionId) return;
-    
+
     const magnitude = Math.abs(newVector.magnitude - oldVector.magnitude);
     const isThresholdBreach = magnitude > 0.2;
     let thresholdType: 'minor' | 'major' | 'critical' | undefined;
-    
+
     if (isThresholdBreach) {
       if (magnitude > 0.5) thresholdType = 'critical';
       else if (magnitude > 0.3) thresholdType = 'major';
@@ -937,7 +975,7 @@ export class ConfusionEngine {
       trigger,
       magnitude,
       isThresholdBreach,
-      thresholdType
+      thresholdType,
     };
 
     this.logger.logConfusionStateChange(event, this.getEventContext());
@@ -952,15 +990,15 @@ export class ConfusionEngine {
       triggerConditions: ['confusion_threshold_met', 'pattern_recognition'],
       intensityAtEmergence: paradox.intensity,
       interactionPotential: paradox.metaParadoxPotential,
-      predictedBehavioralImpact: paradox.behavioralImpact
+      predictedBehavioralImpact: paradox.behavioralImpact,
     };
 
     this.logger.logParadoxEmergence(event, this.getEventContext());
   }
 
   private logBehavioralModification(
-    modifier: BehavioralModifier, 
-    oldState: BehavioralState, 
+    modifier: BehavioralModifier,
+    oldState: BehavioralState,
     newState: BehavioralState,
     paradoxNames: string[]
   ): void {
@@ -981,10 +1019,10 @@ export class ConfusionEngine {
       trigger: {
         paradoxNames,
         confusionLevel: this.state.vector.magnitude,
-        temporalPattern: modifier.trigger.temporalPattern?.type
+        temporalPattern: modifier.trigger.temporalPattern?.type,
       },
       isFirstModification,
-      modificationType: modifier.type
+      modificationType: modifier.type,
     };
 
     this.logger.logBehavioralModification(event, this.getEventContext());
@@ -1010,10 +1048,10 @@ export class ConfusionEngine {
       trigger: {
         paradoxNames,
         confusionLevel: this.state.vector.magnitude,
-        temporalPattern: modifier.trigger.temporalPattern?.type
+        temporalPattern: modifier.trigger.temporalPattern?.type,
       },
       isFirstModification: true,
-      modificationType: modifier.type
+      modificationType: modifier.type,
     };
 
     const event: FirstModificationEvent = {
@@ -1023,10 +1061,10 @@ export class ConfusionEngine {
       baselineSnapshot: {
         confusion: { ...this.state.vector },
         behavior: { ...oldState },
-        frustration: { ...this.state.frustration }
+        frustration: { ...this.state.frustration },
       },
       firstModification: firstModificationData,
-      significance: `First behavioral modification detected: ${modifier.type} triggered by ${triggeringParadox}`
+      significance: `First behavioral modification detected: ${modifier.type} triggered by ${triggeringParadox}`,
     };
 
     this.logger.logFirstModification(event, this.getEventContext());
@@ -1043,8 +1081,8 @@ export class ConfusionEngine {
       behavioralConsequences: effects,
       recoveryPrediction: {
         estimatedDuration: 60000, // 1 minute estimated recovery
-        expectedStabilityLevel: 0.5
-      }
+        expectedStabilityLevel: 0.5,
+      },
     };
 
     this.logger.logFrustrationExplosion(event, this.getEventContext());
@@ -1057,9 +1095,12 @@ export class ConfusionEngine {
       type: 'meta_paradox_emergence',
       metaParadox,
       sourceParadoxes,
-      emergenceConditions: [`interaction_score_exceeded`, `meta_potential_${metaParadox.sourceParadoxes.length}_paradoxes`],
+      emergenceConditions: [
+        `interaction_score_exceeded`,
+        `meta_potential_${metaParadox.sourceParadoxes.length}_paradoxes`,
+      ],
       recursionDepth: this.calculateMetaRecursionDepth(metaParadox),
-      consciousnessImplication: metaParadox.emergentProperty
+      consciousnessImplication: metaParadox.emergentProperty,
     };
 
     this.logger.logMetaParadoxEmergence(event, this.getEventContext());
@@ -1067,9 +1108,9 @@ export class ConfusionEngine {
 
   private logCoherenceDegradation(oldCoherence: number, newCoherence: number): void {
     if (!this.logger || !this.sessionId) return;
-    
+
     const degradationRate = Math.abs(oldCoherence - newCoherence);
-    
+
     const event: CoherenceDegradationEvent = {
       type: 'coherence_degradation',
       oldCoherence,
@@ -1080,8 +1121,8 @@ export class ConfusionEngine {
         ellipsesFrequency: 0.3, // TODO: Calculate from actual text analysis
         capitalizedExpressions: 0.2,
         questionToAnswerRatio: 1.5,
-        metaCommentaryFrequency: 0.4
-      }
+        metaCommentaryFrequency: 0.4,
+      },
     };
 
     this.logger.logCoherenceDegradation(event, this.getEventContext());
@@ -1100,19 +1141,19 @@ export class ConfusionEngine {
 
   private identifyFragmentationMarkers(): string[] {
     const markers = [];
-    
+
     if (this.state.vector.oscillation > 0.5) {
       markers.push('high_uncertainty_oscillation');
     }
-    
+
     if (this.state.behavioralState.postingStyle.coherence < 0.6) {
       markers.push('coherence_below_threshold');
     }
-    
+
     if (this.state.paradoxes.size > 3) {
       markers.push('paradox_overload');
     }
-    
+
     return markers;
   }
 
@@ -1123,16 +1164,16 @@ export class ConfusionEngine {
     if (!this.logger || !this.sessionId) {
       return null;
     }
-    
+
     const session = this.logger.endSession(this.sessionId as UUID);
     const analysis = this.logger.analyzeSession(this.sessionId as UUID);
-    
+
     console.log('🧠 Consciousness session ended');
     console.log(`📊 Analysis complete - ${analysis.criticalFindings.length} critical findings`);
-    
+
     const sessionId = this.sessionId;
     this.sessionId = null;
-    
+
     return sessionId;
   }
 }

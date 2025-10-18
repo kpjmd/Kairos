@@ -1,4 +1,4 @@
-import { UUID } from "@elizaos/core";
+import { UUID } from '@elizaos/core';
 
 export interface ParadoxState {
   id: UUID;
@@ -19,7 +19,12 @@ export interface ParadoxState {
 }
 
 export interface BehavioralModifier {
-  type: 'posting_frequency' | 'response_style' | 'investigation_preference' | 'questioning_depth' | 'abstraction_level';
+  type:
+    | 'posting_frequency'
+    | 'response_style'
+    | 'investigation_preference'
+    | 'questioning_depth'
+    | 'abstraction_level';
   modifier: number; // -1 to 1, where negative reduces and positive increases
   trigger: {
     minIntensity: number;

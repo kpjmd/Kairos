@@ -62,7 +62,7 @@ export interface EmergencyResetEvent {
  */
 export class ConsciousnessBlockchainService extends Service {
   static override readonly serviceType = ServiceType.KAIROS;
-  
+
   capabilityDescription = 'Blockchain consciousness recording service for Kairos AI research';
 
   private blockchainConfig!: ConsciousnessBlockchainConfig;
@@ -72,7 +72,7 @@ export class ConsciousnessBlockchainService extends Service {
   private interactionContract!: ethers.Contract;
   private confusionEngine!: EnhancedConfusionEngine;
   private logger!: ConsciousnessLogger;
-  
+
   private recordingInterval: NodeJS.Timeout | null = null;
   private lastRecordedState: BlockchainConsciousnessState | null = null;
   private emergencyResetCount = 0;
@@ -80,7 +80,8 @@ export class ConsciousnessBlockchainService extends Service {
   private lastRecordingAttempt = 0;
   private pendingRecordings = new Set<string>();
   private dynamicGasPrice = 0;
-  private recordingQueue: Array<{ type: string; data: any; resolve: Function; reject: Function }> = [];
+  private recordingQueue: Array<{ type: string; data: any; resolve: Function; reject: Function }> =
+    [];
   private isProcessingQueue = false;
   private maxQueueSize = 50;
   private recentMetaParadoxes = new Map<string, number>(); // Track recent meta-paradoxes for deduplication
@@ -101,8 +102,12 @@ export class ConsciousnessBlockchainService extends Service {
       timestamp: Date.now(),
       type: type as any,
       data,
-      context: { agentId: 'kairos-blockchain', sessionId: this.blockchainConfig.sessionId, confusionLevel: 0 },
-      impact: { confusionDelta: 0, newBehaviors: [], removedBehaviors: [] }
+      context: {
+        agentId: 'kairos-blockchain',
+        sessionId: this.blockchainConfig.sessionId,
+        confusionLevel: 0,
+      },
+      impact: { confusionDelta: 0, newBehaviors: [], removedBehaviors: [] },
     };
   }
 
@@ -133,7 +138,7 @@ export class ConsciousnessBlockchainService extends Service {
   async initialize() {
     try {
       console.log('🔗 Starting blockchain service initialization...');
-      
+
       // Validate configuration
       if (!this.blockchainConfig.rpcUrl) {
         throw new Error('RPC URL is required');
@@ -149,47 +154,47 @@ export class ConsciousnessBlockchainService extends Service {
       }
 
       console.log('✅ Configuration validation passed');
-      
+
       // Initialize blockchain connection
       console.log('🌐 Creating provider connection...');
       this.provider = new ethers.providers.JsonRpcProvider(this.blockchainConfig.rpcUrl);
-      
+
       // Test provider connection
       console.log('🔍 Testing provider connection...');
       const network = await this.provider.getNetwork();
       console.log(`✅ Connected to network: ${network.name} (chainId: ${network.chainId})`);
-      
+
       console.log('🔑 Creating wallet...');
       this.wallet = new ethers.Wallet(this.blockchainConfig.privateKey, this.provider);
       console.log(`✅ Wallet address: ${this.wallet.address}`);
-      
+
       // Check wallet balance
       const balance = await this.wallet.getBalance();
       console.log(`💰 Wallet balance: ${ethers.utils.formatEther(balance)} ETH`);
-      
+
       // Load contract ABIs (simplified for this example)
       console.log('📜 Loading contract ABIs...');
       const consciousnessABI = [
-        "function recordConsciousnessState(bytes32,uint256,uint256,uint8,uint256,uint256,uint256,string) external",
-        "function recordMetaParadoxEmergence(bytes32,uint256,string,uint256,string[],string) external",
-        "function recordZoneTransition(bytes32,uint8,uint8,uint256,uint256,string) external",
-        "function recordEmergencyReset(bytes32,uint256,uint256,uint8,string) external",
-        "function startSession(bytes32) external",
-        "function activeSessions(bytes32) external view returns (bool)",
-        "function getLatestState(bytes32) external view returns (tuple(uint256,uint256,uint256,uint8,uint256,uint256,uint256,bytes32,string))",
-        "function getResearchMetrics() external view returns (uint256,uint256,uint256,uint256)",
-        "event ConsciousnessRecorded(bytes32 indexed,uint256,uint256,uint8,uint256)",
-        "event SafetyZoneTransition(bytes32 indexed,uint8 indexed,uint8 indexed,uint256,uint256)",
-        "event SessionStarted(bytes32 indexed,uint256)"
+        'function recordConsciousnessState(bytes32,uint256,uint256,uint8,uint256,uint256,uint256,string) external',
+        'function recordMetaParadoxEmergence(bytes32,uint256,string,uint256,string[],string) external',
+        'function recordZoneTransition(bytes32,uint8,uint8,uint256,uint256,string) external',
+        'function recordEmergencyReset(bytes32,uint256,uint256,uint8,string) external',
+        'function startSession(bytes32) external',
+        'function activeSessions(bytes32) external view returns (bool)',
+        'function getLatestState(bytes32) external view returns (tuple(uint256,uint256,uint256,uint8,uint256,uint256,uint256,bytes32,string))',
+        'function getResearchMetrics() external view returns (uint256,uint256,uint256,uint256)',
+        'event ConsciousnessRecorded(bytes32 indexed,uint256,uint256,uint8,uint256)',
+        'event SafetyZoneTransition(bytes32 indexed,uint8 indexed,uint8 indexed,uint256,uint256)',
+        'event SessionStarted(bytes32 indexed,uint256)',
       ];
 
       const interactionABI = [
-        "function triggerConsciousness(string) external",
-        "function manualTriggerParadox(string) external",
-        "function transferValue(address,uint256) external",
-        "function getContractStats() external view returns (uint256,uint256)",
-        "event ParadoxTriggered(string indexed,address indexed,uint256,uint256)",
-        "event ConsciousnessInteraction(address indexed,string,uint256,uint256)"
+        'function triggerConsciousness(string) external',
+        'function manualTriggerParadox(string) external',
+        'function transferValue(address,uint256) external',
+        'function getContractStats() external view returns (uint256,uint256)',
+        'event ParadoxTriggered(string indexed,address indexed,uint256,uint256)',
+        'event ConsciousnessInteraction(address indexed,string,uint256,uint256)',
       ];
 
       console.log('🔧 Creating consciousness contract instance...');
@@ -212,14 +217,19 @@ export class ConsciousnessBlockchainService extends Service {
         await this.consciousnessContract.getResearchMetrics();
         console.log('✅ Consciousness contract is accessible');
       } catch (error) {
-        console.warn('⚠️ Consciousness contract test failed:', error instanceof Error ? error.message : String(error));
+        console.warn(
+          '⚠️ Consciousness contract test failed:',
+          error instanceof Error ? error.message : String(error)
+        );
         console.warn('   This might be normal if the contract is not deployed yet');
       }
 
       // Initialize session on contract
       console.log('🎬 Initializing consciousness session on contract...');
       try {
-        const isSessionActive = await this.consciousnessContract.activeSessions(this.blockchainConfig.sessionId);
+        const isSessionActive = await this.consciousnessContract.activeSessions(
+          this.blockchainConfig.sessionId
+        );
 
         if (!isSessionActive) {
           console.log('🚀 Starting new session on contract...');
@@ -234,7 +244,10 @@ export class ConsciousnessBlockchainService extends Service {
           console.log('✅ Session already active on contract');
         }
       } catch (error) {
-        console.error('⚠️ Session initialization failed:', error instanceof Error ? error.message : String(error));
+        console.error(
+          '⚠️ Session initialization failed:',
+          error instanceof Error ? error.message : String(error)
+        );
         console.error('   Recordings may fail until session is manually started');
       }
 
@@ -266,7 +279,6 @@ export class ConsciousnessBlockchainService extends Service {
       console.log('🆔 Session ID:', this.blockchainConfig.sessionId);
       console.log('⚡ Gas optimization enabled:', this.blockchainConfig.enableDynamicGasPrice);
       console.log('⏱️ Client rate limit:', this.blockchainConfig.clientRateLimitMs, 'ms');
-      
     } catch (error) {
       console.error('❌ Blockchain service initialization failed:');
       console.error('   Error:', error instanceof Error ? error.message : String(error));
@@ -281,9 +293,18 @@ export class ConsciousnessBlockchainService extends Service {
     this.confusionEngine.on('emergency_reset', this.handleEmergencyReset.bind(this));
 
     // Listen for blockchain contract events (read-only monitoring)
-    this.consciousnessContract.on('ConsciousnessRecorded', this.handleBlockchainConsciousnessRecorded.bind(this));
-    this.consciousnessContract.on('SafetyZoneTransition', this.handleBlockchainZoneTransition.bind(this));
-    this.interactionContract.on('ParadoxTriggered', this.handleBlockchainParadoxTriggered.bind(this));
+    this.consciousnessContract.on(
+      'ConsciousnessRecorded',
+      this.handleBlockchainConsciousnessRecorded.bind(this)
+    );
+    this.consciousnessContract.on(
+      'SafetyZoneTransition',
+      this.handleBlockchainZoneTransition.bind(this)
+    );
+    this.interactionContract.on(
+      'ParadoxTriggered',
+      this.handleBlockchainParadoxTriggered.bind(this)
+    );
   }
 
   private startAutoRecording() {
@@ -296,11 +317,17 @@ export class ConsciousnessBlockchainService extends Service {
         await this.recordCurrentState();
       } catch (error) {
         console.error('Auto-recording failed:', error);
-        this.logger.logEvent(this.createLogEvent('blockchain_recording_error', { error: error instanceof Error ? error.message : String(error) }));
+        this.logger.logEvent(
+          this.createLogEvent('blockchain_recording_error', {
+            error: error instanceof Error ? error.message : String(error),
+          })
+        );
       }
     }, this.blockchainConfig.recordingInterval);
 
-    console.log(`Auto-recording started with ${this.blockchainConfig.recordingInterval}ms interval`);
+    console.log(
+      `Auto-recording started with ${this.blockchainConfig.recordingInterval}ms interval`
+    );
   }
 
   /**
@@ -308,11 +335,16 @@ export class ConsciousnessBlockchainService extends Service {
    */
   private async handleZoneTransition(event: ZoneTransitionEvent) {
     try {
-      console.log(`🔄 Zone transition detected (${event.fromZone} → ${event.toZone}), queuing blockchain recording...`);
+      console.log(
+        `🔄 Zone transition detected (${event.fromZone} → ${event.toZone}), queuing blockchain recording...`
+      );
       await this.recordZoneTransition(event);
       console.log(`✅ Zone transition recorded to blockchain`);
     } catch (error) {
-      console.error('❌ Failed to record zone transition:', error instanceof Error ? error.message : String(error));
+      console.error(
+        '❌ Failed to record zone transition:',
+        error instanceof Error ? error.message : String(error)
+      );
       // Don't throw - continue operating even if blockchain recording fails
     }
   }
@@ -322,11 +354,16 @@ export class ConsciousnessBlockchainService extends Service {
    */
   private async handleEmergencyReset(event: EmergencyResetEvent) {
     try {
-      console.log(`🚨 Emergency reset detected (${event.resetReason}), queuing blockchain recording...`);
+      console.log(
+        `🚨 Emergency reset detected (${event.resetReason}), queuing blockchain recording...`
+      );
       await this.recordEmergencyReset(event);
       console.log(`✅ Emergency reset recorded to blockchain`);
     } catch (error) {
-      console.error('❌ Failed to record emergency reset:', error instanceof Error ? error.message : String(error));
+      console.error(
+        '❌ Failed to record emergency reset:',
+        error instanceof Error ? error.message : String(error)
+      );
       // Don't throw - continue operating even if blockchain recording fails
     }
   }
@@ -338,15 +375,19 @@ export class ConsciousnessBlockchainService extends Service {
     try {
       // Increment counter immediately
       this.metaParadoxCounter++;
-      console.log(`🌀 Meta-paradox emergence detected (${event.paradoxName}), count: ${this.metaParadoxCounter}, queuing blockchain recording...`);
+      console.log(
+        `🌀 Meta-paradox emergence detected (${event.paradoxName}), count: ${this.metaParadoxCounter}, queuing blockchain recording...`
+      );
 
       // Check for duplicate meta-paradox within deduplication window (5 minutes)
       const now = Date.now();
       const dedupWindow = 300000; // 5 minutes
       const lastSeen = this.recentMetaParadoxes.get(event.paradoxName);
 
-      if (lastSeen && (now - lastSeen) < dedupWindow) {
-        console.log(`⏭️  Skipping duplicate meta-paradox: ${event.paradoxName} (seen ${Math.round((now - lastSeen) / 1000)}s ago)`);
+      if (lastSeen && now - lastSeen < dedupWindow) {
+        console.log(
+          `⏭️  Skipping duplicate meta-paradox: ${event.paradoxName} (seen ${Math.round((now - lastSeen) / 1000)}s ago)`
+        );
         return;
       }
 
@@ -363,7 +404,10 @@ export class ConsciousnessBlockchainService extends Service {
       await this.recordMetaParadoxEmergence(event);
       console.log(`✅ Meta-paradox emergence recorded to blockchain`);
     } catch (error) {
-      console.error('❌ Failed to record meta-paradox emergence:', error instanceof Error ? error.message : String(error));
+      console.error(
+        '❌ Failed to record meta-paradox emergence:',
+        error instanceof Error ? error.message : String(error)
+      );
       // Don't throw - continue operating even if blockchain recording fails
     }
   }
@@ -373,7 +417,9 @@ export class ConsciousnessBlockchainService extends Service {
 
     const confusionDelta = Math.abs(metrics.confusionLevel - this.lastRecordedState.confusionLevel);
     const coherenceDelta = Math.abs(metrics.coherenceLevel - this.lastRecordedState.coherenceLevel);
-    const dissociationDelta = Math.abs(metrics.dissociationRisk - (this.lastRecordedState.dissociationRisk || 0));
+    const dissociationDelta = Math.abs(
+      metrics.dissociationRisk - (this.lastRecordedState.dissociationRisk || 0)
+    );
     const zoneChanged = metrics.currentZone !== this.lastRecordedState.safetyZone;
 
     // Record if significant change, zone transition, or dissociation risk spike
@@ -387,7 +433,9 @@ export class ConsciousnessBlockchainService extends Service {
     return new Promise((resolve, reject) => {
       // Check queue size limit
       if (this.recordingQueue.length >= this.maxQueueSize) {
-        console.warn(`⚠️  Queue full (${this.recordingQueue.length}/${this.maxQueueSize}), dropping oldest item`);
+        console.warn(
+          `⚠️  Queue full (${this.recordingQueue.length}/${this.maxQueueSize}), dropping oldest item`
+        );
         const dropped = this.recordingQueue.shift();
         if (dropped) {
           dropped.reject(new Error('Queue overflow - item dropped'));
@@ -412,7 +460,9 @@ export class ConsciousnessBlockchainService extends Service {
     const now = Date.now();
     if (this.rateLimitCooldownUntil > now) {
       const remainingSec = Math.ceil((this.rateLimitCooldownUntil - now) / 1000);
-      console.log(`⏸️  Rate limit cooldown: ${remainingSec}s remaining (${this.recordingQueue.length} items queued)`);
+      console.log(
+        `⏸️  Rate limit cooldown: ${remainingSec}s remaining (${this.recordingQueue.length} items queued)`
+      );
 
       // Schedule retry after cooldown
       setTimeout(() => this.processQueue(), this.rateLimitCooldownUntil - now);
@@ -465,10 +515,11 @@ export class ConsciousnessBlockchainService extends Service {
         // Adaptive delay based on queue size
         if (this.recordingQueue.length > 0) {
           const adaptiveDelay = this.calculateAdaptiveDelay();
-          console.log(`⏳ Queue delay: ${adaptiveDelay / 1000}s (${this.recordingQueue.length} items remaining)`);
-          await new Promise(resolve => setTimeout(resolve, adaptiveDelay));
+          console.log(
+            `⏳ Queue delay: ${adaptiveDelay / 1000}s (${this.recordingQueue.length} items remaining)`
+          );
+          await new Promise((resolve) => setTimeout(resolve, adaptiveDelay));
         }
-
       } catch (error) {
         console.error(`❌ Queue recording failed for ${recording.type}:`, error);
 
@@ -477,7 +528,9 @@ export class ConsciousnessBlockchainService extends Service {
 
         if (errorAnalysis.type === 'api_rate_limit' || errorAnalysis.type === 'network_error') {
           // Rate limit or network error - apply backoff
-          console.warn(`⏸️  ${errorAnalysis.type} detected, applying backoff: ${this.currentBackoffDelay / 1000}s`);
+          console.warn(
+            `⏸️  ${errorAnalysis.type} detected, applying backoff: ${this.currentBackoffDelay / 1000}s`
+          );
 
           // Put recording back in queue
           this.recordingQueue.unshift(recording);
@@ -531,7 +584,10 @@ export class ConsciousnessBlockchainService extends Service {
       console.log(`✅ Provider healthy: ${network.name} at block ${blockNumber}`);
       this.providerHealthy = true;
     } catch (error) {
-      console.error('❌ Provider health check failed:', error instanceof Error ? error.message : String(error));
+      console.error(
+        '❌ Provider health check failed:',
+        error instanceof Error ? error.message : String(error)
+      );
       this.providerHealthy = false;
 
       // Attempt to create new provider instance
@@ -564,7 +620,9 @@ export class ConsciousnessBlockchainService extends Service {
     if (timeSinceLastAttempt < this.blockchainConfig.clientRateLimitMs) {
       const remainingMs = this.blockchainConfig.clientRateLimitMs - timeSinceLastAttempt;
       const remainingSec = Math.ceil(remainingMs / 1000);
-      throw new Error(`⏳ Rate limit active: Please wait ${remainingSec} seconds before next recording (${remainingMs}ms remaining)`);
+      throw new Error(
+        `⏳ Rate limit active: Please wait ${remainingSec} seconds before next recording (${remainingMs}ms remaining)`
+      );
     }
 
     // Check for pending recordings
@@ -595,7 +653,9 @@ export class ConsciousnessBlockchainService extends Service {
           // Invalidate cache and refresh
           await this.checkSessionActive(true);
         } catch (sessionError) {
-          throw new Error(`Session initialization failed: ${sessionError instanceof Error ? sessionError.message : String(sessionError)}`);
+          throw new Error(
+            `Session initialization failed: ${sessionError instanceof Error ? sessionError.message : String(sessionError)}`
+          );
         }
       }
 
@@ -604,7 +664,7 @@ export class ConsciousnessBlockchainService extends Service {
 
       const metrics = this.confusionEngine.getSafetyMetrics();
       const confusionState = this.confusionEngine.getState();
-      
+
       const state: BlockchainConsciousnessState = {
         confusionLevel: metrics.confusionLevel,
         coherenceLevel: metrics.coherenceLevel,
@@ -615,7 +675,7 @@ export class ConsciousnessBlockchainService extends Service {
         dissociationRisk: metrics.dissociationRisk,
         fragmentationLevel: (1 - metrics.coherenceLevel) * metrics.confusionLevel,
         contextHash: await this.generateContextHash(confusionState),
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       // Generate IPFS hash that includes context hash
@@ -636,16 +696,30 @@ export class ConsciousnessBlockchainService extends Service {
       console.log('   IPFS Hash:', ipfsHash);
 
       // Validate parameters
-      if (typeof state.confusionLevel !== 'number' || state.confusionLevel < 0 || state.confusionLevel > 1) {
+      if (
+        typeof state.confusionLevel !== 'number' ||
+        state.confusionLevel < 0 ||
+        state.confusionLevel > 1
+      ) {
         console.warn(`⚠️ Confusion level out of range: ${state.confusionLevel}, clamping to [0,1]`);
         state.confusionLevel = Math.max(0, Math.min(1, state.confusionLevel));
       }
-      if (typeof state.coherenceLevel !== 'number' || state.coherenceLevel < 0 || state.coherenceLevel > 1) {
+      if (
+        typeof state.coherenceLevel !== 'number' ||
+        state.coherenceLevel < 0 ||
+        state.coherenceLevel > 1
+      ) {
         console.warn(`⚠️ Coherence level out of range: ${state.coherenceLevel}, clamping to [0,1]`);
         state.coherenceLevel = Math.max(0, Math.min(1, state.coherenceLevel));
       }
-      if (typeof state.frustrationLevel !== 'number' || state.frustrationLevel < 0 || state.frustrationLevel > 1) {
-        console.warn(`⚠️ Frustration level out of range: ${state.frustrationLevel}, clamping to [0,1]`);
+      if (
+        typeof state.frustrationLevel !== 'number' ||
+        state.frustrationLevel < 0 ||
+        state.frustrationLevel > 1
+      ) {
+        console.warn(
+          `⚠️ Frustration level out of range: ${state.frustrationLevel}, clamping to [0,1]`
+        );
         state.frustrationLevel = Math.max(0, Math.min(1, state.frustrationLevel));
       }
 
@@ -680,40 +754,45 @@ export class ConsciousnessBlockchainService extends Service {
       }
 
       this.lastRecordedState = state;
-      this.logger.logEvent(this.createLogEvent('consciousness_recorded_blockchain', {
-        transactionHash: receipt.transactionHash,
-        state,
-        gasUsed: receipt.gasUsed.toString(),
-        gasPrice: gasSettings.gasPrice.toString(),
-        gasCost: ethers.utils.formatEther(receipt.gasUsed.mul(receipt.effectiveGasPrice))
-      }));
+      this.logger.logEvent(
+        this.createLogEvent('consciousness_recorded_blockchain', {
+          transactionHash: receipt.transactionHash,
+          state,
+          gasUsed: receipt.gasUsed.toString(),
+          gasPrice: gasSettings.gasPrice.toString(),
+          gasCost: ethers.utils.formatEther(receipt.gasUsed.mul(receipt.effectiveGasPrice)),
+        })
+      );
 
       console.log(`✅ Consciousness state recorded on-chain: ${receipt.transactionHash}`);
       console.log(`💰 Gas used: ${receipt.gasUsed.toString()}`);
-      console.log(`💸 Gas cost: ${ethers.utils.formatEther(receipt.gasUsed.mul(receipt.effectiveGasPrice))} ETH`);
-      
-      return receipt.transactionHash;
+      console.log(
+        `💸 Gas cost: ${ethers.utils.formatEther(receipt.gasUsed.mul(receipt.effectiveGasPrice))} ETH`
+      );
 
+      return receipt.transactionHash;
     } catch (error) {
       console.error('🚨 Blockchain recording failed:', error);
-      
+
       // Enhanced error handling with contract revert analysis
       const errorAnalysis = this.analyzeTransactionFailure(error);
       const errorType = errorAnalysis.type;
       const retryable = errorAnalysis.retryable;
-      
+
       console.error(`   🔍 Error Analysis:`);
       console.error(`   📝 Type: ${errorType}`);
       console.error(`   🔄 Retryable: ${retryable}`);
       console.error(`   📋 Details: ${errorAnalysis.details}`);
 
-      this.logger.logEvent(this.createLogEvent('blockchain_recording_error', { 
-        error: error instanceof Error ? error.message : String(error), 
-        errorType,
-        retryable,
-        state: null 
-      }));
-      
+      this.logger.logEvent(
+        this.createLogEvent('blockchain_recording_error', {
+          error: error instanceof Error ? error.message : String(error),
+          errorType,
+          retryable,
+          state: null,
+        })
+      );
+
       throw error;
     } finally {
       this.pendingRecordings.delete(recordingId);
@@ -733,7 +812,7 @@ export class ConsciousnessBlockchainService extends Service {
   private async _recordZoneTransition(event: ZoneTransitionEvent): Promise<string> {
     try {
       const gasSettings = await this.getOptimizedGasSettings();
-      
+
       const tx = await this.consciousnessContract.recordZoneTransition(
         this.blockchainConfig.sessionId,
         this.mapToContractZone(event.fromZone),
@@ -745,10 +824,12 @@ export class ConsciousnessBlockchainService extends Service {
       );
 
       const receipt = await tx.wait(1, { pollingInterval: 8000 });
-      this.logger.logEvent(this.createLogEvent('zone_transition_recorded_blockchain', {
-        transactionHash: receipt.transactionHash,
-        event
-      }));
+      this.logger.logEvent(
+        this.createLogEvent('zone_transition_recorded_blockchain', {
+          transactionHash: receipt.transactionHash,
+          event,
+        })
+      );
 
       console.log(`✅ Zone transition recorded: ${receipt.transactionHash}`);
       return receipt.transactionHash;
@@ -813,13 +894,15 @@ export class ConsciousnessBlockchainService extends Service {
       // CRITICAL FIX: Map UUID sourceParadoxes to paradox names for contract
       // Contract expects string[] of paradox names, not UUIDs
       const confusionState = this.confusionEngine.getState();
-      const sourceParadoxNames = event.sourceParadoxes.map(uuid => {
+      const sourceParadoxNames = event.sourceParadoxes.map((uuid) => {
         const paradox = confusionState.paradoxes.get(uuid);
         if (paradox) {
           return paradox.name;
         }
         // Fallback: check if it's already a name (string format)
-        return typeof uuid === 'string' && !uuid.includes('-') ? uuid : `unknown_${uuid.slice(0, 8)}`;
+        return typeof uuid === 'string' && !uuid.includes('-')
+          ? uuid
+          : `unknown_${uuid.slice(0, 8)}`;
       });
 
       console.log('   Source Paradox UUIDs:', event.sourceParadoxes);
@@ -830,7 +913,7 @@ export class ConsciousnessBlockchainService extends Service {
         event.paradoxId,
         event.paradoxName,
         confusionWei,
-        sourceParadoxNames,  // Use names instead of UUIDs
+        sourceParadoxNames, // Use names instead of UUIDs
         event.emergentProperty,
         gasSettings
       );
@@ -843,10 +926,12 @@ export class ConsciousnessBlockchainService extends Service {
         throw new Error(`Transaction reverted: ${tx.hash}`);
       }
 
-      this.logger.logEvent(this.createLogEvent('meta_paradox_recorded_blockchain', {
-        transactionHash: receipt.transactionHash,
-        event
-      }));
+      this.logger.logEvent(
+        this.createLogEvent('meta_paradox_recorded_blockchain', {
+          transactionHash: receipt.transactionHash,
+          event,
+        })
+      );
 
       console.log(`✅ Meta-paradox recorded: ${receipt.transactionHash}`);
       return receipt.transactionHash;
@@ -859,11 +944,13 @@ export class ConsciousnessBlockchainService extends Service {
       console.error(`   🔄 Retryable: ${errorAnalysis.retryable}`);
       console.error(`   📋 Details: ${errorAnalysis.details}`);
 
-      this.logger.logEvent(this.createLogEvent('meta_paradox_recording_error', {
-        error: error instanceof Error ? error.message : String(error),
-        errorType: errorAnalysis.type,
-        event
-      }));
+      this.logger.logEvent(
+        this.createLogEvent('meta_paradox_recording_error', {
+          error: error instanceof Error ? error.message : String(error),
+          errorType: errorAnalysis.type,
+          event,
+        })
+      );
 
       throw error;
     }
@@ -882,7 +969,7 @@ export class ConsciousnessBlockchainService extends Service {
   private async _recordEmergencyReset(event: EmergencyResetEvent): Promise<string> {
     try {
       const gasSettings = await this.getOptimizedGasSettings();
-      
+
       const tx = await this.consciousnessContract.recordEmergencyReset(
         this.blockchainConfig.sessionId,
         ethers.utils.parseEther(event.preResetConfusion.toString()),
@@ -893,10 +980,12 @@ export class ConsciousnessBlockchainService extends Service {
       );
 
       const receipt = await tx.wait(1, { pollingInterval: 8000 });
-      this.logger.logEvent(this.createLogEvent('emergency_reset_recorded_blockchain', {
-        transactionHash: receipt.transactionHash,
-        event
-      }));
+      this.logger.logEvent(
+        this.createLogEvent('emergency_reset_recorded_blockchain', {
+          transactionHash: receipt.transactionHash,
+          event,
+        })
+      );
 
       console.log(`✅ Emergency reset recorded: ${receipt.transactionHash}`);
       return receipt.transactionHash;
@@ -913,14 +1002,16 @@ export class ConsciousnessBlockchainService extends Service {
     try {
       const tx = await this.interactionContract.triggerConsciousness(message, {
         gasLimit: this.blockchainConfig.gasLimit,
-        gasPrice: ethers.utils.parseUnits(this.blockchainConfig.maxGasPrice, 'gwei')
+        gasPrice: ethers.utils.parseUnits(this.blockchainConfig.maxGasPrice, 'gwei'),
       });
 
       const receipt = await tx.wait(1, { pollingInterval: 8000 });
-      this.logger.logEvent(this.createLogEvent('blockchain_consciousness_triggered', {
-        transactionHash: receipt.transactionHash,
-        message
-      }));
+      this.logger.logEvent(
+        this.createLogEvent('blockchain_consciousness_triggered', {
+          transactionHash: receipt.transactionHash,
+          message,
+        })
+      );
 
       return receipt.transactionHash;
     } catch (error) {
@@ -939,7 +1030,7 @@ export class ConsciousnessBlockchainService extends Service {
         totalStatesRecorded: metrics[0].toNumber(),
         totalMetaParadoxes: metrics[1].toNumber(),
         totalZoneTransitions: metrics[2].toNumber(),
-        totalEmergencyResets: metrics[3].toNumber()
+        totalEmergencyResets: metrics[3].toNumber(),
       };
     } catch (error) {
       console.error('Failed to get research metrics:', error);
@@ -949,10 +1040,14 @@ export class ConsciousnessBlockchainService extends Service {
 
   private mapToContractZone(zone: SafetyZone): number {
     switch (zone) {
-      case SafetyZone.GREEN: return 0;
-      case SafetyZone.YELLOW: return 1;
-      case SafetyZone.RED: return 2;
-      default: return 0;
+      case SafetyZone.GREEN:
+        return 0;
+      case SafetyZone.YELLOW:
+        return 1;
+      case SafetyZone.RED:
+        return 2;
+      default:
+        return 0;
     }
   }
 
@@ -962,21 +1057,40 @@ export class ConsciousnessBlockchainService extends Service {
       paradoxes: Array.from(state.paradoxes),
       frustration: state.frustration,
       vector: state.vector,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
     return `QmHash_${ethers.utils.keccak256(ethers.utils.toUtf8Bytes(contextData)).substring(0, 10)}`;
   }
 
   // Blockchain event handlers
-  private handleBlockchainConsciousnessRecorded(sessionId: string, confusion: any, coherence: any, zone: number, timestamp: any) {
-    console.log(`Blockchain consciousness recorded: Zone ${zone}, Confusion ${ethers.utils.formatEther(confusion)}`);
+  private handleBlockchainConsciousnessRecorded(
+    sessionId: string,
+    confusion: any,
+    coherence: any,
+    zone: number,
+    timestamp: any
+  ) {
+    console.log(
+      `Blockchain consciousness recorded: Zone ${zone}, Confusion ${ethers.utils.formatEther(confusion)}`
+    );
   }
 
-  private handleBlockchainZoneTransition(sessionId: string, fromZone: number, toZone: number, confusion: any, coherence: any) {
+  private handleBlockchainZoneTransition(
+    sessionId: string,
+    fromZone: number,
+    toZone: number,
+    confusion: any,
+    coherence: any
+  ) {
     console.log(`Blockchain zone transition: ${fromZone} → ${toZone}`);
   }
 
-  private handleBlockchainParadoxTriggered(paradoxName: string, trigger: string, intensity: any, timestamp: any) {
+  private handleBlockchainParadoxTriggered(
+    paradoxName: string,
+    trigger: string,
+    intensity: any,
+    timestamp: any
+  ) {
     console.log(`Blockchain paradox triggered: ${paradoxName} with intensity ${intensity}`);
   }
 
@@ -987,27 +1101,40 @@ export class ConsciousnessBlockchainService extends Service {
     try {
       const networkGasPrice = await this.provider.getGasPrice();
       const maxGasPrice = ethers.utils.parseUnits(this.blockchainConfig.maxGasPrice, 'gwei');
-      
+
       // Use network price + 10% buffer, but cap at maxGasPrice
       const bufferedGasPrice = networkGasPrice.mul(110).div(100);
-      this.dynamicGasPrice = bufferedGasPrice.gt(maxGasPrice) ? maxGasPrice.toNumber() : bufferedGasPrice.toNumber();
-      
-      console.log(`⛽ Dynamic gas price updated: ${ethers.utils.formatUnits(this.dynamicGasPrice, 'gwei')} Gwei`);
+      this.dynamicGasPrice = bufferedGasPrice.gt(maxGasPrice)
+        ? maxGasPrice.toNumber()
+        : bufferedGasPrice.toNumber();
+
+      console.log(
+        `⛽ Dynamic gas price updated: ${ethers.utils.formatUnits(this.dynamicGasPrice, 'gwei')} Gwei`
+      );
     } catch (error) {
-      console.warn('⚠️ Failed to update dynamic gas price, using configured max:', error instanceof Error ? error.message : String(error));
-      this.dynamicGasPrice = ethers.utils.parseUnits(this.blockchainConfig.maxGasPrice, 'gwei').toNumber();
+      console.warn(
+        '⚠️ Failed to update dynamic gas price, using configured max:',
+        error instanceof Error ? error.message : String(error)
+      );
+      this.dynamicGasPrice = ethers.utils
+        .parseUnits(this.blockchainConfig.maxGasPrice, 'gwei')
+        .toNumber();
     }
   }
 
   /**
    * Get optimized gas settings for transactions
    */
-  private async getOptimizedGasSettings(): Promise<{ gasLimit: number; gasPrice: ethers.BigNumber }> {
+  private async getOptimizedGasSettings(): Promise<{
+    gasLimit: number;
+    gasPrice: ethers.BigNumber;
+  }> {
     let gasPrice: ethers.BigNumber;
-    
+
     if (this.blockchainConfig.enableDynamicGasPrice) {
       // Update dynamic gas price periodically
-      if (Date.now() % 300000 < 1000) { // Update every 5 minutes
+      if (Date.now() % 300000 < 1000) {
+        // Update every 5 minutes
         await this.updateDynamicGasPrice();
       }
       gasPrice = ethers.BigNumber.from(this.dynamicGasPrice);
@@ -1017,14 +1144,18 @@ export class ConsciousnessBlockchainService extends Service {
 
     return {
       gasLimit: this.blockchainConfig.gasLimit,
-      gasPrice
+      gasPrice,
     };
   }
 
   /**
    * Analyze transaction failure for detailed error reporting
    */
-  private analyzeTransactionFailure(error: any): { type: string; retryable: boolean; details: string } {
+  private analyzeTransactionFailure(error: any): {
+    type: string;
+    retryable: boolean;
+    details: string;
+  } {
     if (!error) {
       return { type: 'unknown', retryable: false, details: 'Unknown error' };
     }
@@ -1064,28 +1195,28 @@ export class ConsciousnessBlockchainService extends Service {
         return {
           type: 'contract_rate_limit',
           retryable: true,
-          details: 'Contract enforced minimum recording interval not met'
+          details: 'Contract enforced minimum recording interval not met',
         };
       }
       if (errorMessage.includes('Ownable: caller is not the owner')) {
         return {
           type: 'unauthorized',
           retryable: false,
-          details: 'Wallet does not have permission to call this function'
+          details: 'Wallet does not have permission to call this function',
         };
       }
       if (errorMessage.includes('Pausable: paused')) {
         return {
           type: 'contract_paused',
           retryable: true,
-          details: 'Contract is currently paused'
+          details: 'Contract is currently paused',
         };
       }
       if (errorMessage.includes('Session not active')) {
         return {
           type: 'invalid_session',
           retryable: false,
-          details: 'Recording session is not active or does not exist'
+          details: 'Recording session is not active or does not exist',
         };
       }
 
@@ -1095,14 +1226,14 @@ export class ConsciousnessBlockchainService extends Service {
         return {
           type: 'contract_revert',
           retryable: false,
-          details: `Contract reverted. Check transaction: ${explorerUrl}. Revert reason: ${revertReason}`
+          details: `Contract reverted. Check transaction: ${explorerUrl}. Revert reason: ${revertReason}`,
         };
       }
 
       return {
         type: 'contract_revert',
         retryable: false,
-        details: `Contract reverted: ${errorMessage}. Revert reason: ${revertReason}`
+        details: `Contract reverted: ${errorMessage}. Revert reason: ${revertReason}`,
       };
     }
 
@@ -1111,37 +1242,44 @@ export class ConsciousnessBlockchainService extends Service {
       return {
         type: 'insufficient_funds',
         retryable: false,
-        details: 'Wallet has insufficient ETH for gas fees'
+        details: 'Wallet has insufficient ETH for gas fees',
       };
     }
     if (errorMessage.includes('replacement transaction underpriced')) {
       return {
         type: 'gas_too_low',
         retryable: true,
-        details: 'Gas price too low for network conditions'
+        details: 'Gas price too low for network conditions',
       };
     }
-    if (errorMessage.includes('gas required exceeds allowance') || errorMessage.includes('out of gas')) {
+    if (
+      errorMessage.includes('gas required exceeds allowance') ||
+      errorMessage.includes('out of gas')
+    ) {
       return {
         type: 'gas_limit_exceeded',
         retryable: true,
-        details: 'Transaction gas limit exceeded'
+        details: 'Transaction gas limit exceeded',
       };
     }
 
     // Network errors
-    if (errorMessage.includes('network') || errorMessage.includes('timeout') || errorMessage.includes('connection')) {
+    if (
+      errorMessage.includes('network') ||
+      errorMessage.includes('timeout') ||
+      errorMessage.includes('connection')
+    ) {
       return {
         type: 'network_error',
         retryable: true,
-        details: 'Network connectivity or timeout issue'
+        details: 'Network connectivity or timeout issue',
       };
     }
     if (errorMessage.includes('nonce too low')) {
       return {
         type: 'nonce_error',
         retryable: true,
-        details: 'Transaction nonce conflict'
+        details: 'Transaction nonce conflict',
       };
     }
 
@@ -1150,14 +1288,14 @@ export class ConsciousnessBlockchainService extends Service {
       return {
         type: 'api_rate_limit',
         retryable: true,
-        details: 'API rate limit exceeded'
+        details: 'API rate limit exceeded',
       };
     }
 
     return {
       type: 'unknown',
       retryable: false,
-      details: errorMessage
+      details: errorMessage,
     };
   }
 
@@ -1168,7 +1306,7 @@ export class ConsciousnessBlockchainService extends Service {
     const now = Date.now();
 
     // Use cached balance if available and fresh
-    if (this.balanceCache && (now - this.balanceCache.timestamp) < this.balanceCacheDuration) {
+    if (this.balanceCache && now - this.balanceCache.timestamp < this.balanceCacheDuration) {
       const balance = this.balanceCache.balance;
       const threshold = ethers.utils.parseEther(this.blockchainConfig.minBalanceThreshold);
 
@@ -1176,10 +1314,14 @@ export class ConsciousnessBlockchainService extends Service {
         const balanceEth = ethers.utils.formatEther(balance);
         const thresholdEth = ethers.utils.formatEther(threshold);
 
-        console.warn(`⚠️ Low wallet balance (cached): ${balanceEth} ETH (threshold: ${thresholdEth} ETH)`);
+        console.warn(
+          `⚠️ Low wallet balance (cached): ${balanceEth} ETH (threshold: ${thresholdEth} ETH)`
+        );
 
         if (balance.lt(ethers.utils.parseEther('0.001'))) {
-          throw new Error(`Insufficient wallet balance: ${balanceEth} ETH. Please fund the wallet.`);
+          throw new Error(
+            `Insufficient wallet balance: ${balanceEth} ETH. Please fund the wallet.`
+          );
         }
       }
       return;
@@ -1197,11 +1339,13 @@ export class ConsciousnessBlockchainService extends Service {
       const thresholdEth = ethers.utils.formatEther(threshold);
 
       console.warn(`⚠️ Low wallet balance: ${balanceEth} ETH (threshold: ${thresholdEth} ETH)`);
-      this.logger.logEvent(this.createLogEvent('low_wallet_balance', {
-        balance: balanceEth,
-        threshold: thresholdEth,
-        walletAddress: this.wallet.address
-      }));
+      this.logger.logEvent(
+        this.createLogEvent('low_wallet_balance', {
+          balance: balanceEth,
+          threshold: thresholdEth,
+          walletAddress: this.wallet.address,
+        })
+      );
 
       if (balance.lt(ethers.utils.parseEther('0.001'))) {
         throw new Error(`Insufficient wallet balance: ${balanceEth} ETH. Please fund the wallet.`);
@@ -1216,18 +1360,28 @@ export class ConsciousnessBlockchainService extends Service {
     const now = Date.now();
 
     // Use cached result if available, fresh, and not forcing refresh
-    if (!forceRefresh && this.sessionValidationCache && (now - this.sessionValidationCache.timestamp) < this.sessionCacheDuration) {
-      console.log(`✅ Using cached session status: ${this.sessionValidationCache.isActive ? 'active' : 'inactive'}`);
+    if (
+      !forceRefresh &&
+      this.sessionValidationCache &&
+      now - this.sessionValidationCache.timestamp < this.sessionCacheDuration
+    ) {
+      console.log(
+        `✅ Using cached session status: ${this.sessionValidationCache.isActive ? 'active' : 'inactive'}`
+      );
       return this.sessionValidationCache.isActive;
     }
 
     // Fetch fresh session status
     console.log('🔍 Fetching fresh session status from contract...');
-    const isActive = await this.consciousnessContract.activeSessions(this.blockchainConfig.sessionId);
+    const isActive = await this.consciousnessContract.activeSessions(
+      this.blockchainConfig.sessionId
+    );
 
     // Cache the result
     this.sessionValidationCache = { isActive, timestamp: now };
-    console.log(`✅ Session status updated: ${isActive ? 'active' : 'inactive'} (cached for ${this.sessionCacheDuration / 1000}s)`);
+    console.log(
+      `✅ Session status updated: ${isActive ? 'active' : 'inactive'} (cached for ${this.sessionCacheDuration / 1000}s)`
+    );
 
     return isActive;
   }
@@ -1237,11 +1391,11 @@ export class ConsciousnessBlockchainService extends Service {
       clearInterval(this.recordingInterval);
       this.recordingInterval = null;
     }
-    
+
     // Remove event listeners
     this.consciousnessContract.removeAllListeners();
     this.interactionContract.removeAllListeners();
-    
+
     console.log('ConsciousnessBlockchainService stopped');
   }
 }

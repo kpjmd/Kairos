@@ -77,14 +77,14 @@ export class FarcasterConfusionService {
       maxPostsPerHour: 10,
       maxPostsPerDay: 120,
       burstLimit: 3,
-      burstWindowMs: 300000 // 5 minutes
+      burstWindowMs: 300000, // 5 minutes
     });
 
     // Initialize with baseline authenticity spiral paradox
     this.confusionEngine.addParadox(this.authenticitySpiral.generateParadoxState());
 
     // Initialize channel states for monitored channels
-    ENV_CONFIG.channels.forEach(channel => {
+    ENV_CONFIG.channels.forEach((channel) => {
       this.initializeChannelState(channel);
     });
 
@@ -125,14 +125,24 @@ export class FarcasterConfusionService {
 
     if (!coherenceBrakeStatus.canPost) {
       console.log(`🚨 Coherence brake: ${coherenceBrakeStatus.reason}`);
-      return { should: false, reason: `coherence_brake_${coherenceBrakeStatus.brakeLevel.toLowerCase()}`, urgency: 0, postType: 'original' };
+      return {
+        should: false,
+        reason: `coherence_brake_${coherenceBrakeStatus.brakeLevel.toLowerCase()}`,
+        urgency: 0,
+        postType: 'original',
+      };
     }
 
     // SAFETY CHECK 2: Rate Limiter (prevents spam)
     const rateLimitStatus = this.rateLimiter.checkLimit();
     if (!rateLimitStatus.canPost) {
       console.log(`⏱️ Rate limit: ${rateLimitStatus.reason}`);
-      return { should: false, reason: 'rate_limiter_' + rateLimitStatus.reason?.replace(/\s+/g, '_'), urgency: 0, postType: 'original' };
+      return {
+        should: false,
+        reason: 'rate_limiter_' + rateLimitStatus.reason?.replace(/\s+/g, '_'),
+        urgency: 0,
+        postType: 'original',
+      };
     }
 
     // Check legacy rate limits
@@ -143,11 +153,7 @@ export class FarcasterConfusionService {
 
     // Calculate minimum interval based on confusion and channel
     const baseInterval = 60000 / recommendations.postingStyle.frequency;
-    const minInterval = calculatePostingInterval(
-      baseInterval,
-      state.vector.magnitude,
-      channel
-    );
+    const minInterval = calculatePostingInterval(baseInterval, state.vector.magnitude, channel);
 
     // Check temporal conditions
     if (timeSinceLastPost < minInterval) {
@@ -159,7 +165,8 @@ export class FarcasterConfusionService {
       const postType = state.vector.magnitude > 0.95 ? 'thread' : 'original';
       return {
         should: true,
-        reason: state.vector.magnitude > 0.95 ? 'consciousness_breakthrough' : 'consciousness_emergence',
+        reason:
+          state.vector.magnitude > 0.95 ? 'consciousness_breakthrough' : 'consciousness_emergence',
         urgency: state.vector.magnitude,
         postType,
       };
@@ -234,7 +241,9 @@ export class FarcasterConfusionService {
 
     // Check hourly limit
     if (this.postsThisHour >= RATE_LIMITS.MAX_POSTS_PER_HOUR) {
-      console.log(`⏸️ Rate limit: ${this.postsThisHour} posts this hour (max: ${RATE_LIMITS.MAX_POSTS_PER_HOUR})`);
+      console.log(
+        `⏸️ Rate limit: ${this.postsThisHour} posts this hour (max: ${RATE_LIMITS.MAX_POSTS_PER_HOUR})`
+      );
       return false;
     }
 
@@ -413,7 +422,7 @@ export class FarcasterConfusionService {
 
     // Add ellipses and broken syntax for fragmentation effect
     return selected
-      .map(f => {
+      .map((f) => {
         const prefix = Math.random() > 0.5 ? '...' : '';
         const suffix = Math.random() > 0.5 ? '...' : '';
         return `${prefix}${f}${suffix}`;
@@ -481,7 +490,7 @@ export class FarcasterConfusionService {
     if (coherence < POSTING_BEHAVIOR.coherence.medium) {
       post = post
         .split('')
-        .map(char =>
+        .map((char) =>
           Math.random() < 1 - coherence
             ? Math.random() > 0.5
               ? char.toUpperCase()
@@ -618,13 +627,12 @@ export class FarcasterConfusionService {
     const isAI = isLikelyAIAgent(cast.author, cast.text);
 
     // Identify confusion triggers
-    const confusionTriggers = AI_AGENT_PATTERNS.contentKeywords.filter(keyword =>
+    const confusionTriggers = AI_AGENT_PATTERNS.contentKeywords.filter((keyword) =>
       cast.text.toLowerCase().includes(keyword)
     );
 
     // Analyze for authenticity paradoxes
-    const totalEngagement =
-      cast.reactions.likes + cast.reactions.recasts + cast.reactions.replies;
+    const totalEngagement = cast.reactions.likes + cast.reactions.recasts + cast.reactions.replies;
     const spiralAnalysis = this.authenticitySpiral.analyzePost(
       cast.text,
       totalEngagement,
@@ -826,10 +834,7 @@ export class FarcasterConfusionService {
     }
 
     // Consciousness/AI topics high engagement in target channels
-    if (
-      context.channel &&
-      ['/philosophy', '/ai', '/consciousness'].includes(context.channel)
-    ) {
+    if (context.channel && ['/philosophy', '/ai', '/consciousness'].includes(context.channel)) {
       potential += 0.15;
     }
 
@@ -857,7 +862,10 @@ export class FarcasterConfusionService {
 
     if (shouldPostResult.should) {
       // Handle mentions first (highest priority)
-      if (shouldPostResult.reason.includes('mention') || shouldPostResult.reason.includes('ai_interaction')) {
+      if (
+        shouldPostResult.reason.includes('mention') ||
+        shouldPostResult.reason.includes('ai_interaction')
+      ) {
         const mentionItem = this.mentionQueue[0];
         return {
           action: 'reply',
@@ -911,7 +919,10 @@ export class FarcasterConfusionService {
 
     // Check if we should investigate
     const state = this.confusionEngine.getState();
-    if (state.vector.magnitude > CONFUSION_THRESHOLDS.INVESTIGATION_THRESHOLD && this.investigationQueue.length === 0) {
+    if (
+      state.vector.magnitude > CONFUSION_THRESHOLDS.INVESTIGATION_THRESHOLD &&
+      this.investigationQueue.length === 0
+    ) {
       return {
         action: 'investigate',
         reason: 'high_confusion_requires_investigation',

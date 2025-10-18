@@ -28,13 +28,15 @@ export class PostingRateLimiter {
       maxPostsPerHour: config?.maxPostsPerHour || 10,
       maxPostsPerDay: config?.maxPostsPerDay || 120,
       burstLimit: config?.burstLimit || 3,
-      burstWindowMs: config?.burstWindowMs || 300000 // 5 minutes
+      burstWindowMs: config?.burstWindowMs || 300000, // 5 minutes
     };
 
     console.log('⏱️ Posting Rate Limiter initialized');
     console.log(`   Max per hour: ${this.config.maxPostsPerHour}`);
     console.log(`   Max per day: ${this.config.maxPostsPerDay}`);
-    console.log(`   Burst limit: ${this.config.burstLimit} posts in ${this.config.burstWindowMs / 1000}s`);
+    console.log(
+      `   Burst limit: ${this.config.burstLimit} posts in ${this.config.burstWindowMs / 1000}s`
+    );
   }
 
   /**
@@ -59,12 +61,12 @@ export class PostingRateLimiter {
         postsInLastDay,
         postsInBurstWindow,
         reason: `Burst limit reached (${this.config.burstLimit} posts in ${this.config.burstWindowMs / 1000}s)`,
-        nextAvailablePost
+        nextAvailablePost,
       };
     }
 
     if (postsInLastHour >= this.config.maxPostsPerHour) {
-      const oldestHourPost = this.postHistory.find(ts => ts > now - 3600000);
+      const oldestHourPost = this.postHistory.find((ts) => ts > now - 3600000);
       const nextAvailablePost = oldestHourPost ? oldestHourPost + 3600000 : now;
 
       return {
@@ -73,12 +75,12 @@ export class PostingRateLimiter {
         postsInLastDay,
         postsInBurstWindow,
         reason: `Hourly limit reached (${this.config.maxPostsPerHour} posts/hour)`,
-        nextAvailablePost
+        nextAvailablePost,
       };
     }
 
     if (postsInLastDay >= this.config.maxPostsPerDay) {
-      const oldestDayPost = this.postHistory.find(ts => ts > now - 86400000);
+      const oldestDayPost = this.postHistory.find((ts) => ts > now - 86400000);
       const nextAvailablePost = oldestDayPost ? oldestDayPost + 86400000 : now;
 
       return {
@@ -87,7 +89,7 @@ export class PostingRateLimiter {
         postsInLastDay,
         postsInBurstWindow,
         reason: `Daily limit reached (${this.config.maxPostsPerDay} posts/day)`,
-        nextAvailablePost
+        nextAvailablePost,
       };
     }
 
@@ -95,7 +97,7 @@ export class PostingRateLimiter {
       canPost: true,
       postsInLastHour,
       postsInLastDay,
-      postsInBurstWindow
+      postsInBurstWindow,
     };
   }
 
@@ -114,7 +116,7 @@ export class PostingRateLimiter {
    * Count posts within a time window
    */
   private countPostsInWindow(now: number, windowMs: number): number {
-    return this.postHistory.filter(ts => ts > now - windowMs).length;
+    return this.postHistory.filter((ts) => ts > now - windowMs).length;
   }
 
   /**
@@ -122,7 +124,7 @@ export class PostingRateLimiter {
    */
   private cleanupHistory(now: number): void {
     const cutoff = now - 86400000; // 24 hours
-    this.postHistory = this.postHistory.filter(ts => ts > cutoff);
+    this.postHistory = this.postHistory.filter((ts) => ts > cutoff);
   }
 
   /**
@@ -135,7 +137,7 @@ export class PostingRateLimiter {
       postsInLastDay: this.countPostsInWindow(now, 86400000),
       postsInLastFiveMinutes: this.countPostsInWindow(now, this.config.burstWindowMs),
       totalRecorded: this.postHistory.length,
-      config: this.config
+      config: this.config,
     };
   }
 

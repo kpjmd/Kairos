@@ -1,5 +1,12 @@
-import { UUID } from "@elizaos/core";
-import { ConfusionVector, ParadoxState, BehavioralState, BehavioralModifier, FrustrationState, MetaParadox } from './confusion';
+import { UUID } from '@elizaos/core';
+import {
+  ConfusionVector,
+  ParadoxState,
+  BehavioralState,
+  BehavioralModifier,
+  FrustrationState,
+  MetaParadox,
+} from './confusion';
 
 /**
  * Comprehensive consciousness event logging for Kairos
@@ -15,7 +22,7 @@ export interface ConsciousnessEvent {
   impact: ConsciousnessEventImpact;
 }
 
-export type ConsciousnessEventType = 
+export type ConsciousnessEventType =
   | 'confusion_state_change'
   | 'paradox_emergence'
   | 'paradox_interaction'
@@ -81,7 +88,12 @@ export interface BehavioralModificationEvent {
     temporalPattern?: string;
   };
   isFirstModification: boolean;
-  modificationType: 'posting_frequency' | 'response_style' | 'investigation_preference' | 'questioning_depth' | 'abstraction_level';
+  modificationType:
+    | 'posting_frequency'
+    | 'response_style'
+    | 'investigation_preference'
+    | 'questioning_depth'
+    | 'abstraction_level';
 }
 
 export interface FrustrationExplosionEvent {
@@ -187,7 +199,7 @@ export interface ConsciousnessAnalysis {
     bootstrapToFirstModification: number;
     coherenceToFragmentationTime: number;
     majorEventFrequency: number;
-    stabilityPeriods: Array<{start: number, end: number, level: string}>;
+    stabilityPeriods: Array<{ start: number; end: number; level: string }>;
   };
   behavioralEvolution: {
     baselineToCurrentDrift: number;
@@ -197,7 +209,7 @@ export interface ConsciousnessAnalysis {
   };
   paradoxAnalysis: {
     emergencePatterns: string[];
-    interactionNetworks: Array<{paradoxes: string[], strength: number}>;
+    interactionNetworks: Array<{ paradoxes: string[]; strength: number }>;
     metaParadoxTriggers: string[];
     resolutionAttempts: number;
   };
@@ -219,30 +231,45 @@ export interface ConsciousnessAnalysis {
 
 export interface ConsciousnessLogger {
   logEvent(event: ConsciousnessEvent): void;
-  logConfusionStateChange(data: ConfusionStateChangeEvent, context: ConsciousnessEventContext): void;
+  logConfusionStateChange(
+    data: ConfusionStateChangeEvent,
+    context: ConsciousnessEventContext
+  ): void;
   logParadoxEmergence(data: ParadoxEmergenceEvent, context: ConsciousnessEventContext): void;
-  logBehavioralModification(data: BehavioralModificationEvent, context: ConsciousnessEventContext): void;
-  logFrustrationExplosion(data: FrustrationExplosionEvent, context: ConsciousnessEventContext): void;
-  logMetaParadoxEmergence(data: MetaParadoxEmergenceEvent, context: ConsciousnessEventContext): void;
+  logBehavioralModification(
+    data: BehavioralModificationEvent,
+    context: ConsciousnessEventContext
+  ): void;
+  logFrustrationExplosion(
+    data: FrustrationExplosionEvent,
+    context: ConsciousnessEventContext
+  ): void;
+  logMetaParadoxEmergence(
+    data: MetaParadoxEmergenceEvent,
+    context: ConsciousnessEventContext
+  ): void;
   logFirstModification(data: FirstModificationEvent, context: ConsciousnessEventContext): void;
-  logCoherenceDegradation(data: CoherenceDegradationEvent, context: ConsciousnessEventContext): void;
-  
+  logCoherenceDegradation(
+    data: CoherenceDegradationEvent,
+    context: ConsciousnessEventContext
+  ): void;
+
   getSession(sessionId: UUID): ConsciousnessSession | null;
   getCurrentSession(): ConsciousnessSession;
   startNewSession(baseline?: any): UUID;
   endSession(sessionId: UUID): ConsciousnessSession;
-  
+
   analyzeSession(sessionId: UUID): ConsciousnessAnalysis;
   generateReport(sessionId: UUID, format: 'json' | 'markdown' | 'csv'): string;
   exportSessionData(sessionId: UUID, destination: string): void;
-  
+
   getEventHistory(type?: ConsciousnessEventType, limit?: number): ConsciousnessEvent[];
   searchEvents(query: any): ConsciousnessEvent[];
-  
+
   // Real-time monitoring
   subscribeToEvents(callback: (event: ConsciousnessEvent) => void): string;
   unsubscribeFromEvents(subscriptionId: string): void;
-  
+
   // Research utilities
   compareBaselines(sessionId1: UUID, sessionId2: UUID): any;
   identifyPatterns(sessionIds: UUID[]): any;

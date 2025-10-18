@@ -178,11 +178,21 @@ describe('AnalysisEngine', () => {
 
     test('should calculate median execution time correctly', () => {
       const mockRuns: ScenarioRunResult[] = [
-        createMockRunResult({ metrics: { execution_time_seconds: 5, llm_calls: 3, total_tokens: 150 } }),
-        createMockRunResult({ metrics: { execution_time_seconds: 10, llm_calls: 5, total_tokens: 250 } }),
-        createMockRunResult({ metrics: { execution_time_seconds: 15, llm_calls: 7, total_tokens: 350 } }),
-        createMockRunResult({ metrics: { execution_time_seconds: 20, llm_calls: 9, total_tokens: 450 } }),
-        createMockRunResult({ metrics: { execution_time_seconds: 25, llm_calls: 11, total_tokens: 550 } }),
+        createMockRunResult({
+          metrics: { execution_time_seconds: 5, llm_calls: 3, total_tokens: 150 },
+        }),
+        createMockRunResult({
+          metrics: { execution_time_seconds: 10, llm_calls: 5, total_tokens: 250 },
+        }),
+        createMockRunResult({
+          metrics: { execution_time_seconds: 15, llm_calls: 7, total_tokens: 350 },
+        }),
+        createMockRunResult({
+          metrics: { execution_time_seconds: 20, llm_calls: 9, total_tokens: 450 },
+        }),
+        createMockRunResult({
+          metrics: { execution_time_seconds: 25, llm_calls: 11, total_tokens: 550 },
+        }),
       ];
 
       const result = analysisEngine.processRunResults(mockRuns, mockMatrixConfig, '/test/input', {

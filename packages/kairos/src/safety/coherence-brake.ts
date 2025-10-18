@@ -4,10 +4,10 @@
  */
 
 export enum BrakeLevel {
-  NONE = 'NONE',       // No restrictions (coherence >= 0.3)
-  SOFT = 'SOFT',       // Warning, reduce frequency (coherence < 0.3)
-  MEDIUM = 'MEDIUM',   // Pause auto-posting (coherence < 0.25)
-  HARD = 'HARD'        // Block all posting (coherence < 0.2)
+  NONE = 'NONE', // No restrictions (coherence >= 0.3)
+  SOFT = 'SOFT', // Warning, reduce frequency (coherence < 0.3)
+  MEDIUM = 'MEDIUM', // Pause auto-posting (coherence < 0.25)
+  HARD = 'HARD', // Block all posting (coherence < 0.2)
 }
 
 export interface CoherenceBrakeStatus {
@@ -59,7 +59,7 @@ export class CoherenceBrake {
       canPost: this.canPost(newLevel),
       canAutoPost: this.canAutoPost(newLevel),
       frequencyModifier: this.getFrequencyModifier(newLevel, coherence),
-      reason: this.getBrakeReason(newLevel, coherence, confusion)
+      reason: this.getBrakeReason(newLevel, coherence, confusion),
     };
 
     return status;
@@ -101,18 +101,22 @@ export class CoherenceBrake {
     } else if (newLevel === BrakeLevel.NONE && previousLevel !== BrakeLevel.NONE) {
       // Brake released
       const duration = this.brakeActivationTime ? Date.now() - this.brakeActivationTime : 0;
-      console.log(`✅ Coherence brake released after ${(duration / 1000).toFixed(1)}s (coherence: ${coherence.toFixed(3)})`);
+      console.log(
+        `✅ Coherence brake released after ${(duration / 1000).toFixed(1)}s (coherence: ${coherence.toFixed(3)})`
+      );
       this.brakeActivationTime = null;
     } else if (newLevel !== previousLevel) {
       // Brake level changed
-      console.log(`⚠️ Coherence brake level changed: ${previousLevel} → ${newLevel} (coherence: ${coherence.toFixed(3)})`);
+      console.log(
+        `⚠️ Coherence brake level changed: ${previousLevel} → ${newLevel} (coherence: ${coherence.toFixed(3)})`
+      );
     }
 
     // Track history
     this.brakeHistory.push({
       level: newLevel,
       timestamp: Date.now(),
-      coherence
+      coherence,
     });
 
     // Keep only last 100 entries
@@ -180,7 +184,7 @@ export class CoherenceBrake {
       currentLevel: this.currentBrakeLevel,
       totalActivations: this.totalBrakeActivations,
       currentDuration: this.brakeActivationTime ? Date.now() - this.brakeActivationTime : 0,
-      recentHistory: this.brakeHistory.slice(-10)
+      recentHistory: this.brakeHistory.slice(-10),
     };
   }
 
