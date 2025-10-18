@@ -8,7 +8,9 @@ concurrency:
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  # Use test API key if secret not configured (tests use mocked responses)
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || 'sk-test-openai-key-for-ci-testing-only' }}
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY || 'sk-ant-test-key-for-ci-testing-only' }}
   ELIZA_NONINTERACTIVE: true
 
 on:

@@ -23,7 +23,11 @@
     "dist/**/*",
     "dist/version.js",
     "templates",
-    "templates/**/*"
+    "templates/**/*",
+    "templates/**/.gitignore",
+    "templates/**/.npmignore",
+    "templates/**/.dockerignore",
+    "templates/**/.env.example"
   ],
   "keywords": [],
   "type": "module",

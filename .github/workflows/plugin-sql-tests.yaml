@@ -5,6 +5,15 @@ concurrency:
   group: plugin-sql-tests-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+env:
+  # PGLite WASM configuration for CI
+  PGLITE_WASM_MODE: node
+  NODE_ENV: test
+  # Use test API keys for CI (tests use mocked responses)
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || 'sk-test-openai-key-for-ci-testing-only' }}
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY || 'sk-ant-test-key-for-ci-testing-only' }}
+  ELIZA_NONINTERACTIVE: true
+
 on:
   push:
     branches:
