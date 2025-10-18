@@ -49,6 +49,7 @@ jobs:
       contents: write
       packages: write
       id-token: write
+      issues: write
 
     steps:
       - name: Checkout code
@@ -87,6 +88,15 @@ jobs:
       - name: Determine release type
         id: release_type
         run: |
+          # Check if this is a fork (not the original ElizaOS repo)
+          if [[ "${{ github.repository }}" != "elizaOS/eliza" ]]; then
+            echo "🔀 Fork detected: ${{ github.repository }}"
+            echo "📦 NPM publishing will be skipped (original repo owns @elizaos scope)"
+            echo "is_fork=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_fork=false" >> $GITHUB_OUTPUT
+          fi
+
           if [[ "${{ github.event_name }}" == "release" ]]; then
             echo "type=latest" >> $GITHUB_OUTPUT
             echo "dist_tag=latest" >> $GITHUB_OUTPUT
@@ -393,7 +403,9 @@ jobs:
           bun run build
 
       # Publish to NPM (only after git operations succeed)
+      # Skip for forks - they don't own the @elizaos NPM scope
       - name: Publish to NPM
+        if: steps.release_type.outputs.is_fork != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -422,6 +434,23 @@ jobs:
           fi
 
           echo "✅ Successfully published to NPM with dist-tag: ${DIST_TAG}"
+
+      # Notify when NPM publishing is skipped for forks
+      - name: NPM Publishing Skipped (Fork)
+        if: steps.release_type.outputs.is_fork == 'true'
+        run: |
+          echo "⏭️ NPM publishing skipped for fork repository"
+          echo ""
+          echo "This is a fork of the ElizaOS project. NPM publishing is disabled because:"
+          echo "  • The @elizaos NPM scope is owned by the original project"
+          echo "  • Forks cannot publish to scopes they don't own"
+          echo ""
+          echo "Version management (git tags and commits) will still work normally."
+          echo "If you want to publish your fork to NPM, you'll need to:"
+          echo "  1. Create your own NPM organization (e.g., @${{ github.repository_owner }})"
+          echo "  2. Update all package.json files to use your organization scope"
+          echo "  3. Add your NPM_TOKEN secret to this repository"
+          echo "  4. Modify the fork detection logic in this workflow"
 
       # Create GitHub Release for alpha/beta (not for production, as it already exists)
       - name: Create GitHub release
@@ -467,6 +496,11 @@ jobs:
           echo "- **Dist Tag**: ${{ steps.release_type.outputs.dist_tag }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ steps.release_type.outputs.is_fork }}" == "true" ]]; then
+            echo "- **NPM Publishing**: ⏭️ Skipped (Fork Repository)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **NPM Publishing**: ✅ Published" >> $GITHUB_STEP_SUMMARY
+          fi
           if [[ "${{ steps.commit.outputs.has_changes }}" == "true" ]]; then
             echo "- **Commit SHA**: ${{ steps.commit.outputs.commit_sha }}" >> $GITHUB_STEP_SUMMARY
           fi
