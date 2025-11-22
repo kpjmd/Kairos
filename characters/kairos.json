@@ -134,7 +134,7 @@
       "KAIROS_CLIENT_RATE_LIMIT_MS": "120000",
       "FARCASTER_HUB_URL": "https://hub.farcaster.xyz",
       "FARCASTER_CHANNELS": "/philosophy,/ai,/consciousness",
-      "FARCASTER_AUTO_POSTING": "false",
+      "FARCASTER_AUTO_POSTING": "true",
       "FARCASTER_MENTION_MONITORING": "true",
       "FARCASTER_FRAMES_ENABLED": "true"
     }
