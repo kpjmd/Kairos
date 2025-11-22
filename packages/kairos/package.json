@@ -1,6 +1,6 @@
 {
   "name": "@elizaos/kairos",
-  "version": "1.5.13-beta.30",
+  "version": "1.5.13-beta.31",
   "description": "Meta-Cultural Pattern Synthesizer - Confusion State Management for Eliza",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
