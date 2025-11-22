@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@elizaos/core": "workspace:*",
-    "@elizaos/plugin-farcaster": "workspace:*",
+    "@elizaos/plugin-farcaster": "^1.0.5",
     "@elizaos/service-interfaces": "workspace:*",
     "uuid": "^11.0.5",
     "viem": "^2.21.67"

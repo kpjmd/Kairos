@@ -8,6 +8,7 @@ on:
 jobs:
   update-news:
     runs-on: ubuntu-latest
+    if: false # Disabled - autodocs branch not available in this fork
 
     steps:
       - uses: actions/checkout@v4
