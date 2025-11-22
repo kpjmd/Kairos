@@ -10,7 +10,7 @@
     "build": "tsup --format esm,cjs --dts",
     "dev": "tsup --watch",
     "test": "bun test",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
