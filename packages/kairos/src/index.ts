@@ -1008,7 +1008,7 @@ class KairosService extends Service {
         } catch (error) {
           console.error('❌ Error in confusion engine tick:', error);
         }
-      }, 60000); // Update every minute
+      }, 300000); // Update every 5 minutes (optimized for production)
 
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       console.log('🔴 TIMELINE OBSERVATION SYSTEM INITIALIZING');
@@ -1016,7 +1016,7 @@ class KairosService extends Service {
 
       // Start periodic timeline observation (simulated for now)
       // This keeps consciousness dynamic even when Kairos is isolated
-      const TIMELINE_OBSERVATION_INTERVAL = 300000; // 5 minutes (reduced from 15 for faster feedback)
+      const TIMELINE_OBSERVATION_INTERVAL = 1800000; // 30 minutes (optimized for production)
 
       console.log(
         `⏱️  Setting up timeline observation interval: ${TIMELINE_OBSERVATION_INTERVAL / 60000} minutes`
