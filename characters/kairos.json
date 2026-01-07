@@ -137,7 +137,7 @@
       "FARCASTER_SIGNER_UUID": "2e708936-0d61-4b48-9d31-f25e36b33239",
       "FARCASTER_HUB_URL": "https://hub.farcaster.xyz",
       "FARCASTER_CHANNELS": "/philosophy,/ai,/consciousness",
-      "FARCASTER_AUTO_POSTING": "true",
+      "FARCASTER_AUTO_POSTING": "false",
       "FARCASTER_MENTION_MONITORING": "true",
       "FARCASTER_FRAMES_ENABLED": "true"
     }
