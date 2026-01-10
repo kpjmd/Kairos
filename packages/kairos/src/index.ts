@@ -978,22 +978,37 @@ class KairosService extends Service {
       this.farcasterIntegrationService = null;
       try {
         console.log('🎯 Initializing Farcaster Integration Service...');
-        this.farcasterIntegrationService = new FarcasterIntegrationService(
-          runtime,
-          this.farcasterService,
-          this.confusionEngine
-        );
 
-        const integrationInitialized = await this.farcasterIntegrationService.initialize();
-        if (integrationInitialized) {
-          console.log(
-            '✅ Farcaster Integration Service enabled - mentions, replies, and engagement active'
-          );
+        // Check for required credentials
+        const hasNeynarKey = !!runtime.getSetting('FARCASTER_NEYNAR_API_KEY');
+        const hasSignerUUID = !!runtime.getSetting('FARCASTER_SIGNER_UUID');
+        const hasFID = !!runtime.getSetting('FARCASTER_FID');
+
+        if (!hasNeynarKey || !hasSignerUUID || !hasFID) {
+          console.warn('⚠️ Farcaster Integration Service: Missing required credentials');
+          console.warn(`  - FARCASTER_NEYNAR_API_KEY: ${hasNeynarKey ? 'SET' : 'MISSING'}`);
+          console.warn(`  - FARCASTER_SIGNER_UUID: ${hasSignerUUID ? 'SET' : 'MISSING'}`);
+          console.warn(`  - FARCASTER_FID: ${hasFID ? 'SET' : 'MISSING'}`);
+          console.warn('  Farcaster integration will be disabled until credentials are configured.');
+          // Don't initialize service without credentials
         } else {
-          console.log(
-            '⚠️ Farcaster Integration Service initialization failed - using basic features only'
+          this.farcasterIntegrationService = new FarcasterIntegrationService(
+            runtime,
+            this.farcasterService,
+            this.confusionEngine
           );
-          this.farcasterIntegrationService = null;
+
+          const integrationInitialized = await this.farcasterIntegrationService.initialize();
+          if (integrationInitialized) {
+            console.log(
+              '✅ Farcaster Integration Service enabled - mentions, replies, and engagement active'
+            );
+          } else {
+            console.log(
+              '⚠️ Farcaster Integration Service initialization failed - using basic features only'
+            );
+            this.farcasterIntegrationService = null;
+          }
         }
       } catch (error) {
         console.error('❌ Failed to initialize Farcaster Integration Service:', error);

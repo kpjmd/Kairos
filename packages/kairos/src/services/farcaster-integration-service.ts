@@ -75,6 +75,16 @@ export class FarcasterIntegrationService {
   private lastMentionCheck: number = 0;
   private processedMentionIds: Set<string> = new Set();
 
+  // Circuit breaker state
+  private consecutiveErrors: number = 0;
+  private lastErrorTime: number = 0;
+  private circuitBreakerOpen: boolean = false;
+  private circuitBreakerResetTime: number = 0;
+
+  // Circuit breaker constants
+  private readonly MAX_CONSECUTIVE_ERRORS = 3;
+  private readonly CIRCUIT_BREAKER_TIMEOUT = 300000; // 5 minutes
+
   constructor(
     runtime: IAgentRuntime,
     confusionService: FarcasterConfusionService,
@@ -182,6 +192,24 @@ export class FarcasterIntegrationService {
   private async pollMentions(): Promise<void> {
     if (!this.castService) return;
 
+    // Circuit breaker check
+    if (this.circuitBreakerOpen) {
+      const now = Date.now();
+      if (now < this.circuitBreakerResetTime) {
+        const remainingSeconds = Math.ceil((this.circuitBreakerResetTime - now) / 1000);
+        if (now - this.lastErrorTime > 60000) { // Log once per minute
+          console.log(`⏸️ Mention polling paused (circuit breaker open, retry in ${remainingSeconds}s)`);
+          this.lastErrorTime = now;
+        }
+        return;
+      } else {
+        // Attempt to close circuit breaker
+        console.log('🔄 Circuit breaker attempting reset...');
+        this.circuitBreakerOpen = false;
+        this.consecutiveErrors = 0;
+      }
+    }
+
     try {
       console.log('🔍 Polling for mentions...');
 
@@ -191,23 +219,27 @@ export class FarcasterIntegrationService {
         limit: RATE_LIMITS.MAX_MENTIONS_PER_CHECK,
       });
 
+      // Success - reset error tracking
+      if (this.consecutiveErrors > 0) {
+        console.log('✅ Mention polling recovered after errors');
+      }
+      this.consecutiveErrors = 0;
+      this.circuitBreakerOpen = false;
+
       console.log(`📬 Found ${mentions?.length || 0} mentions`);
 
       if (!mentions || mentions.length === 0) {
         return;
       }
 
-      // Process each mention
+      // Process each mention (existing logic)
       for (const mention of mentions) {
-        // Skip if we've already processed this mention
         if (this.processedMentionIds.has(mention.id)) {
           continue;
         }
 
-        // Mark as processed
         this.processedMentionIds.add(mention.id);
 
-        // Limit processed mention cache size
         if (this.processedMentionIds.size > 200) {
           const firstId = Array.from(this.processedMentionIds)[0];
           this.processedMentionIds.delete(firstId);
@@ -217,13 +249,44 @@ export class FarcasterIntegrationService {
           `💬 Processing mention from @${mention.username}: "${mention.text.slice(0, 50)}..."`
         );
 
-        // Process through confusion service
         await this.handleMention(mention);
       }
 
       this.lastMentionCheck = Date.now();
     } catch (error) {
-      console.error('❌ Error polling mentions:', error);
+      this.consecutiveErrors++;
+      const now = Date.now();
+
+      // Determine if error is credential-related
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const isCredentialError = errorMessage.toLowerCase().includes('unauthorized') ||
+                                errorMessage.toLowerCase().includes('forbidden') ||
+                                errorMessage.toLowerCase().includes('invalid') ||
+                                errorMessage.toLowerCase().includes('401') ||
+                                errorMessage.toLowerCase().includes('403');
+
+      if (this.consecutiveErrors === 1) {
+        // First error - log details
+        console.error('❌ Error polling mentions:', errorMessage);
+        if (isCredentialError) {
+          console.error('🔑 Credential-related error detected. Check FARCASTER_NEYNAR_API_KEY and FARCASTER_SIGNER_UUID environment variables.');
+        }
+      } else if (this.consecutiveErrors >= this.MAX_CONSECUTIVE_ERRORS) {
+        // Open circuit breaker after repeated failures
+        this.circuitBreakerOpen = true;
+        this.circuitBreakerResetTime = now + this.CIRCUIT_BREAKER_TIMEOUT;
+        console.error(
+          `⚠️ Circuit breaker opened after ${this.consecutiveErrors} consecutive errors. Pausing mention polling for ${this.CIRCUIT_BREAKER_TIMEOUT / 1000}s.`
+        );
+        if (isCredentialError) {
+          console.error('💡 Action required: Update Farcaster credentials in Railway environment variables to restore mention monitoring.');
+        }
+      } else {
+        // Subsequent errors - minimal logging
+        console.error(`❌ Mention polling error ${this.consecutiveErrors}/${this.MAX_CONSECUTIVE_ERRORS}`);
+      }
+
+      this.lastErrorTime = now;
     }
   }
 
