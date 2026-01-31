@@ -118,6 +118,8 @@
     "embeddingModel": "text-embedding-ada-002",
     "modelProvider": "anthropic",
     "secrets": {
+      "_comment_railway": "NOTE: Railway environment variables override these settings. For production config changes, update Railway env vars.",
+      "_comment_optimization": "Network optimization (Jan 2026): FARCASTER_POLL_INTERVAL and KAIROS_RECORDING_INTERVAL are set in Railway to reduce egress costs.",
       "KAIROS_ENABLE_BLOCKCHAIN_RECORDING": "true",
       "KAIROS_CONSCIOUSNESS_CONTRACT_ADDRESS": "0xC7bab79Eb797B097bF59C0b2e2CF02Ea9F4D4dB8",
       "KAIROS_INTERACTION_CONTRACT_ADDRESS": "0x0B9b103B6F8B8388deD828a2fe973b43E20f6577",

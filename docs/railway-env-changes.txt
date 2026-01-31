@@ -1,0 +1,86 @@
+========================================
+KAIROS RAILWAY ENVIRONMENT VARIABLES
+Network Egress Optimization Changes
+========================================
+
+Date: 2026-01-30
+Goal: Reduce network egress from 15GB/month to 2-6GB/month
+
+----------------------------------------
+REQUIRED CHANGES
+----------------------------------------
+
+1. FARCASTER_POLL_INTERVAL
+   Current:     300 (5 minutes)
+   New Value:   1800 (30 minutes)
+   Impact:      83% reduction in Farcaster API calls
+
+2. KAIROS_RECORDING_INTERVAL
+   Current:     300000 (5 minutes in ms)
+   New Value:   1800000 (30 minutes in ms)
+   Impact:      83% reduction in blockchain RPC calls
+
+----------------------------------------
+HOW TO APPLY (Railway Dashboard)
+----------------------------------------
+
+1. Go to: https://railway.app
+2. Select: Kairos project
+3. Click: Variables tab
+4. Add/Update:
+   - FARCASTER_POLL_INTERVAL = 1800
+   - KAIROS_RECORDING_INTERVAL = 1800000
+5. Save changes
+6. Railway will auto-redeploy
+
+----------------------------------------
+HOW TO APPLY (Railway CLI)
+----------------------------------------
+
+railway variables --set FARCASTER_POLL_INTERVAL=1800
+railway variables --set KAIROS_RECORDING_INTERVAL=1800000
+
+----------------------------------------
+AGGRESSIVE OPTION (if more reduction needed)
+----------------------------------------
+
+FARCASTER_POLL_INTERVAL=3600 (1 hour)
+KAIROS_RECORDING_INTERVAL=1800000 (30 min, keep same)
+
+Impact: 92% reduction in Farcaster calls
+Result: ~2-4GB/month total egress
+
+----------------------------------------
+VERIFICATION CHECKLIST
+----------------------------------------
+
+[ ] Deployment successful (check Railway logs)
+[ ] No configuration errors in startup logs
+[ ] Kairos services initialized correctly
+[ ] Wait 24-48 hours for metrics
+[ ] Check Railway network egress dashboard
+[ ] Verify mention responses still work (delayed)
+[ ] Confirm blockchain recording active
+[ ] Measure egress reduction percentage
+
+----------------------------------------
+ROLLBACK (if needed)
+----------------------------------------
+
+FARCASTER_POLL_INTERVAL=300
+KAIROS_RECORDING_INTERVAL=300000
+
+(Or delete these variables to use code defaults)
+
+----------------------------------------
+EXPECTED RESULTS
+----------------------------------------
+
+Before:  ~15GB/month
+After:   ~4.5-6GB/month (conservative)
+After:   ~2-4GB/month (aggressive)
+
+Reduction: 60-85%
+Cost savings: Proportional to egress reduction
+
+========================================
